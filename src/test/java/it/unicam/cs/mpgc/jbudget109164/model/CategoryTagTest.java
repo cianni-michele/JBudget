@@ -41,7 +41,7 @@ class CategoryTagTest {
         @DisplayName("Should return name correctly")
         void shouldReturnNameCorrectly() {
             Tag tag = new CategoryTag("TagName");
-            assertEquals("TagName", tag.getName());
+            assertEquals("TagName", tag.name());
         }
     }
 
@@ -53,7 +53,7 @@ class CategoryTagTest {
         @DisplayName("Should have empty parent by default")
         void shouldHaveEmptyParentByDefault() {
             Tag tag = new CategoryTag("TagName");
-            assertTrue(tag.getParent().isEmpty());
+            assertTrue(tag.parent().isEmpty());
         }
 
         @Test
@@ -61,7 +61,7 @@ class CategoryTagTest {
         void shouldReturnParentCorrectlyWhenProvided() {
             Tag parent = new CategoryTag("ParentTag");
             Tag child = new CategoryTag(parent, "ChildTag");
-            assertEquals(Optional.of(parent), child.getParent());
+            assertEquals(Optional.of(parent), child.parent());
         }
     }
 

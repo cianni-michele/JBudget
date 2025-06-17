@@ -15,14 +15,14 @@ public interface Tag extends Iterable<Tag> {
      *
      * @return the name of the tag
      */
-    String getName();
+    String name();
 
     /**
      * Returns the parent tag of this tag if it exists.
      *
      * @return an Optional containing the parent tag if it exists, otherwise an empty Optional
      */
-    Optional<Tag> getParent();
+    Optional<Tag> parent();
 
 
     /**
@@ -43,27 +43,27 @@ public interface Tag extends Iterable<Tag> {
     /**
      * Add a child tag to this tag.
      *
-     * @param child the child tag to add
+     * @param tag the child tag to add
      * @throws NullPointerException     if the child tag is null
      * @throws IllegalArgumentException if the child tag is already a child of this tag
      */
-    void addChild(Tag child);
+    void addChild(Tag tag);
 
     /**
      * Checks if this tag contains the specified child tags.
      *
-     * @param childs the child tags to check for
+     * @param tags the child tags to check for
      * @return true if this tag contains all specified child tags, false otherwise
      */
-    default boolean containsChild(Tag... childs) {
-        return containsChild(Set.of(childs));
+    default boolean containsChild(Tag... tags) {
+        return containsChild(Set.of(tags));
     }
 
     /**
      * Checks if this tag contains the specified set of child tags.
      *
-     * @param childs the set of child tags to check for
+     * @param tags the set of child tags to check for
      * @return true if this tag contains all specified child tags, false otherwise
      */
-    boolean containsChild(Set<Tag> childs);
+    boolean containsChild(Set<Tag> tags);
 }

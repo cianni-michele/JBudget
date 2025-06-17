@@ -10,8 +10,7 @@ import static java.util.stream.Collectors.*;
  * An instance of this class represents a category tag, which can have a parent tag and child tags,
  * and is used to categorize other tags or transactions.
  * <p>
- * This class implements the {@link Tag} interface and provides methods to manage the tag's hierarchy,
- * add child tags, and traverse the tag tree.
+ * This class implements the {@link Tag} interface.
  *
  * @author Michele Cianni
  * @see Tag
@@ -73,12 +72,12 @@ public class CategoryTag implements Tag {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public Optional<Tag> getParent() {
+    public Optional<Tag> parent() {
         return Optional.ofNullable(parent);
     }
 
@@ -93,23 +92,23 @@ public class CategoryTag implements Tag {
     }
 
     @Override
-    public void addChild(Tag child) {
-        Objects.requireNonNull(child, "Child tag cannot be null");
+    public void addChild(Tag tag) {
+        Objects.requireNonNull(tag, "Child tag cannot be null");
 
-        if (child.containsChild(this)) {
+        if (tag.containsChild(this)) {
             throw new IllegalArgumentException("Cannot add a tag as its own child");
         }
 
-        this.children.add(child);
+        this.children.add(tag);
     }
 
 
     @Override
-    public boolean containsChild(Set<Tag> childs) {
-        if (childs == null || childs.isEmpty()) {
+    public boolean containsChild(Set<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
             return false;
         }
-        Map<Tag, Boolean> tagsFound = childs.stream().collect(toMap(tag -> tag, tag -> false));
+        Map<Tag, Boolean> tagsFound = tags.stream().collect(toMap(tag -> tag, tag -> false));
 
         traverseChildren(tag -> {
             if (tagsFound.containsKey(tag)) {
@@ -164,12 +163,12 @@ public class CategoryTag implements Tag {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CategoryTag categoryTag = (CategoryTag) o;
-        return Objects.equals(getName(), categoryTag.getName());
+        return Objects.equals(name(), categoryTag.name());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName());
+        return Objects.hashCode(name());
     }
 
     @Override
