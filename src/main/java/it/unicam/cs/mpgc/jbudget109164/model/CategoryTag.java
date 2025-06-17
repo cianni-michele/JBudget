@@ -7,9 +7,16 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.*;
 
 /**
- * An instance of this class represents a simple tag that can be associated with transactions.
+ * An instance of this class represents a category tag, which can have a parent tag and child tags,
+ * and is used to categorize other tags or transactions.
+ * <p>
+ * This class implements the {@link Tag} interface and provides methods to manage the tag's hierarchy,
+ * add child tags, and traverse the tag tree.
+ *
+ * @author Michele Cianni
+ * @see Tag
  */
-public class SimpleTag implements Tag {
+public class CategoryTag implements Tag {
 
     private final Tag parent;
     private final String name;
@@ -22,7 +29,7 @@ public class SimpleTag implements Tag {
      * @throws NullPointerException     if name is null
      * @throws IllegalArgumentException if name is empty
      */
-    public SimpleTag(String name) {
+    public CategoryTag(String name) {
         this(null, name);
     }
 
@@ -34,7 +41,7 @@ public class SimpleTag implements Tag {
      * @throws NullPointerException     if name is null
      * @throws IllegalArgumentException if name is empty
      */
-    public SimpleTag(Tag parent, String name) {
+    public CategoryTag(Tag parent, String name) {
         this(parent, name, new HashSet<>());
     }
 
@@ -47,7 +54,7 @@ public class SimpleTag implements Tag {
      * @throws NullPointerException     if name or children are null
      * @throws IllegalArgumentException if name is empty
      */
-    protected SimpleTag(Tag parent, String name, Set<Tag> children) {
+    protected CategoryTag(Tag parent, String name, Set<Tag> children) {
         this.parent = parent;
         this.name = validateAndGetName(name);
         this.children = validateAndGetChildren(children);
@@ -156,8 +163,8 @@ public class SimpleTag implements Tag {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleTag simpleTag = (SimpleTag) o;
-        return Objects.equals(getName(), simpleTag.getName());
+        CategoryTag categoryTag = (CategoryTag) o;
+        return Objects.equals(getName(), categoryTag.getName());
     }
 
     @Override
