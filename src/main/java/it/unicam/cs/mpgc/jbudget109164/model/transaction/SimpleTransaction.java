@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import static java.util.Collections.*;
 import static java.util.Objects.*;
 
 /**
