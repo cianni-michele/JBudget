@@ -13,7 +13,7 @@ import java.util.UUID;
 public class SimpleTransactionFactory implements TransactionFactory {
 
     @Override
-    public Transaction createTransaction(TransactionDetails transactionDetails) {
-        return new SimpleTransaction(UUID.randomUUID(), transactionDetails);
+    public Transaction createTransaction(UUID id, TransactionDetails transactionDetails) {
+        return new SimpleTransaction(id, transactionDetails);
     }
 }
