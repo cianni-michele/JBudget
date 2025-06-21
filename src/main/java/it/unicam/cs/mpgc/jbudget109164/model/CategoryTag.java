@@ -40,7 +40,7 @@ public class CategoryTag implements Tag {
      * @throws NullPointerException     if name is null
      * @throws IllegalArgumentException if name is empty
      */
-    public CategoryTag(Tag parent, String name) {
+    protected CategoryTag(Tag parent, String name) {
         this(parent, name, new HashSet<>());
     }
 
@@ -82,6 +82,11 @@ public class CategoryTag implements Tag {
     }
 
     @Override
+    public Set<Tag> children() {
+        return children;
+    }
+
+    @Override
     public boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -99,7 +104,9 @@ public class CategoryTag implements Tag {
             throw new IllegalArgumentException("Cannot add a tag as its own child");
         }
 
-        this.children.add(tag);
+        Tag child = new CategoryTag(this, tag.name(), tag.children());
+
+        this.children.add(child);
     }
 
 

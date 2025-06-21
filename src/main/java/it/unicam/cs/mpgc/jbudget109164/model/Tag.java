@@ -24,6 +24,12 @@ public interface Tag extends Iterable<Tag> {
      */
     Optional<Tag> parent();
 
+    /**
+     * Returns the children tags associated with this tag.
+     *
+     * @return a Set of child tags
+     */
+    Set<Tag> children();
 
     /**
      * Checks if this tag has any child tags.
@@ -38,7 +44,6 @@ public interface Tag extends Iterable<Tag> {
      * @return a stream of child tags
      */
     Stream<Tag> stream();
-
 
     /**
      * Add a child tag to this tag.
