@@ -2,6 +2,7 @@ package it.unicam.cs.mpgc.jbudget109164.repository.serialization;
 
 import com.google.gson.*;
 import it.unicam.cs.mpgc.jbudget109164.model.CategoryTag;
+import it.unicam.cs.mpgc.jbudget109164.model.CategoryTagFactory;
 import it.unicam.cs.mpgc.jbudget109164.model.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.TagFactory;
 import org.junit.jupiter.api.Assertions;
@@ -11,20 +12,14 @@ import org.junit.jupiter.api.Test;
 
 class TagTypeAdapterTest {
 
-    private final TagFactory factory = (name, children) -> {
-        Tag tag = new CategoryTag(name);
-        for (Tag child : children) {
-            tag.addChild(child);
-        }
-        return tag;
-    };
+    private final TagFactory tagFactory = new CategoryTagFactory();
 
     private Gson gson;
 
     @BeforeEach
     void setUp() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(Tag.class, new TagTypeAdapter(factory))
+                .registerTypeAdapter(Tag.class, new TagTypeAdapter(tagFactory))
                 .create();
     }
 
