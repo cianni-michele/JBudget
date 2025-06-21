@@ -78,9 +78,9 @@ public interface DataManager {
     void removeTransaction(UUID id);
 
     /**
-     * Returns a list of all tags associated with transactions.
+     * Returns a set of all tags associated with transactions.
      *
-     * @return a list of all tags
+     * @return a set of all tags
      */
     Set<Tag> getAllTags();
 
