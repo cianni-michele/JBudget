@@ -18,7 +18,7 @@ import static java.util.Objects.*;
  * @author Michele Cianni
  * @see Transaction
  */
-public final class SimpleTransaction implements Transaction {
+public class SimpleTransaction implements Transaction {
 
     private final UUID id;
     private final TransactionDetails details;
