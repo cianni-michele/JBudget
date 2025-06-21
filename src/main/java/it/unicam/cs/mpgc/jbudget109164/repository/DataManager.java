@@ -3,7 +3,7 @@ package it.unicam.cs.mpgc.jbudget109164.repository;
 import it.unicam.cs.mpgc.jbudget109164.model.BudgetPlan;
 import it.unicam.cs.mpgc.jbudget109164.model.Scheduler;
 import it.unicam.cs.mpgc.jbudget109164.model.Tag;
-import it.unicam.cs.mpgc.jbudget109164.model.Transaction;
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 
 import java.util.List;
 import java.util.UUID;

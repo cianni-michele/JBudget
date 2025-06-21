@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.ScheduledTransaction;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;

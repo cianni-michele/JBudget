@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.ScheduledTransaction;
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
