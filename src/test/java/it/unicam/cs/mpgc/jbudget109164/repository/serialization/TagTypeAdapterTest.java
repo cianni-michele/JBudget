@@ -5,10 +5,11 @@ import it.unicam.cs.mpgc.jbudget109164.model.CategoryTag;
 import it.unicam.cs.mpgc.jbudget109164.model.CategoryTagFactory;
 import it.unicam.cs.mpgc.jbudget109164.model.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.TagFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TagTypeAdapterTest {
 
@@ -38,7 +39,7 @@ class TagTypeAdapterTest {
             Tag actual = gson.fromJson(json, Tag.class);
             Tag expected = new CategoryTag("Test Tag");
 
-            Assertions.assertEquals(expected, actual);
+            assertEquals(expected, actual);
         }
 
         @Test
@@ -59,7 +60,7 @@ class TagTypeAdapterTest {
             Tag expected = new CategoryTag("Test Tag");
             expected.addChild(new CategoryTag("Child Tag 1"));
 
-            Assertions.assertEquals(expected, actual);
+            assertEquals(expected, actual);
         }
 
         @Test
@@ -85,7 +86,7 @@ class TagTypeAdapterTest {
             expected.addChild(new CategoryTag("Child Tag 1"));
             expected.addChild(new CategoryTag("Child Tag 2"));
 
-            Assertions.assertEquals(expected, actual);
+            assertEquals(expected, actual);
         }
 
         @Test
@@ -114,7 +115,7 @@ class TagTypeAdapterTest {
             child1.addChild(grandChild1);
             expected.addChild(child1);
 
-            Assertions.assertEquals(expected, actual);
+            assertEquals(expected, actual);
         }
 
     }
@@ -135,7 +136,7 @@ class TagTypeAdapterTest {
                 }
                 """, JsonElement.class);
 
-            assertEquals(expected, actual);
+            CustomAssertions.Tag.assertEquals(expected, actual);
         }
 
         @Test
@@ -157,7 +158,7 @@ class TagTypeAdapterTest {
                 }
                 """, JsonElement.class);
 
-            assertEquals(expected, actual);
+            CustomAssertions.Tag.assertEquals(expected, actual);
         }
 
         @Test
@@ -185,7 +186,7 @@ class TagTypeAdapterTest {
                 }
                 """, JsonElement.class);
 
-            assertEquals(expected, actual);
+            CustomAssertions.Tag.assertEquals(expected, actual);
         }
 
         @Test
@@ -214,56 +215,7 @@ class TagTypeAdapterTest {
                 }
                 """, JsonElement.class);
 
-            assertEquals(expected, actual);
-        }
-
-        private void assertEquals(JsonElement expected, JsonElement actual) {
-            JsonObject expectedObject = expected.getAsJsonObject();
-            JsonObject actualObject = actual.getAsJsonObject();
-
-            Assertions.assertEquals(
-                    expectedObject.get("name").getAsString(),
-                    actualObject.get("name").getAsString(),
-                    "Tag names do not match"
-            );
-
-
-            JsonArray expectedChildrenJsonArray = expectedObject.getAsJsonArray("children");
-            JsonArray actualChildrenJsonArray = actualObject.getAsJsonArray("children");
-
-            Assertions.assertEquals(
-                    expectedChildrenJsonArray.size(),
-                    actualChildrenJsonArray.size(),
-                    "Number of children does not match"
-            );
-
-            for (JsonElement actualJsonChild : actualChildrenJsonArray) {
-                boolean foundMatch = false;
-                for (JsonElement expectedJsonChild : expectedChildrenJsonArray) {
-                    String actualChildName = actualJsonChild.getAsJsonObject().get("name").getAsString();
-                    String expectedChildName = expectedJsonChild.getAsJsonObject().get("name").getAsString();
-
-                    if (actualChildName.equals(expectedChildName)) {
-                        JsonArray actualGrandchildren = actualJsonChild.getAsJsonObject().getAsJsonArray("children");
-                        JsonArray expectedGrandchildren = expectedJsonChild.getAsJsonObject().getAsJsonArray("children");
-
-                        if (!actualGrandchildren.isEmpty() || !expectedGrandchildren.isEmpty()) {
-                            JsonObject actualChildObj = actualJsonChild.getAsJsonObject();
-                            JsonObject expectedChildObj = expectedJsonChild.getAsJsonObject();
-
-                            assertEquals(expectedChildObj, actualChildObj);
-                        }
-
-                        foundMatch = true;
-                        break;
-                    }
-                }
-
-                Assertions.assertTrue(
-                        foundMatch,
-                        "Expected child not found in actual children"
-                );
-            }
+            CustomAssertions.Tag.assertEquals(expected, actual);
         }
     }
 }
