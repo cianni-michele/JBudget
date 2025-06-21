@@ -8,6 +8,14 @@ import java.util.Set;
 
 import static java.util.Objects.*;
 
+/**
+ * Represents a fixed-rate scheduled transaction that occurs on a specific day of the month.
+ * This transaction is generated at regular intervals (monthly) between a start and end date.
+ * <p>
+ * This class implements the {@link ScheduledTransaction} interface.
+ *
+ * @author Michele Cianni
+ */
 public class FixedRateScheduledTransaction implements ScheduledTransaction {
 
     private final TransactionFactory transactionFactory;
@@ -18,7 +26,17 @@ public class FixedRateScheduledTransaction implements ScheduledTransaction {
     private final String description;
     private final int dayOfMonth;
 
-
+    /**
+     * Creates a new FixedRateScheduledTransaction with the specified parameters.
+     *
+     * @param transactionFactory the factory used to create transactions
+     * @param startDate the start date of the transaction schedule, must not be null
+     * @param endDate the end date of the transaction schedule, must not be null
+     * @param amount the amount of the transaction, must be non-negative
+     * @param description the description of the transaction, can be null
+     * @param tags the tags associated with the transaction, can be null (will default to an empty set)
+     * @param dayOfMonth the day of the month when the transaction occurs, must be between 1 and 31
+     */
     public FixedRateScheduledTransaction(TransactionFactory transactionFactory,
                                          LocalDate startDate,
                                          LocalDate endDate,
