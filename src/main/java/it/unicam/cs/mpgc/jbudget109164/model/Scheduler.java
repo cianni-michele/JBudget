@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.ScheduledTransaction;
 
 import java.time.LocalDate;
@@ -13,11 +14,21 @@ import java.util.List;
 public interface Scheduler {
 
     /**
-     * Generates a list of transactions based on the scheduled transactions within the specified date range.
+     * Returns a list of upcoming transactions that are scheduled within the specified period.
      *
-     * @param from the start date of the range
-     * @param to the end date of the range
-     * @return a list of transactions generated for the specified date range
+     * @param period the period within which to find upcoming transactions
+     * @return a list of scheduled transactions that will occur within the specified period
      */
-    List<ScheduledTransaction> getUpcomingTransactions(LocalDate from, LocalDate to);
+    List<ScheduledTransaction> getUpcomingTransactions(Period period);
+
+    /**
+     * Returns a list of upcoming transactions that are scheduled between the specified dates.
+     *
+     * @param from the start date of the period
+     * @param to   the end date of the period
+     * @return a list of scheduled transactions that will occur between the specified dates
+     */
+    default List<ScheduledTransaction> getUpcomingTransactions(LocalDate from, LocalDate to) {
+        return getUpcomingTransactions(Period.of(from, to));
+    }
 }

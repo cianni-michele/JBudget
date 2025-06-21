@@ -11,12 +11,21 @@ import java.util.List;
 public interface ScheduledTransaction {
 
     /**
-     * Generates a list of transactions based on the schedule defined by this ScheduledTransaction
-     * within the specified date range.
+     * Generates a list of transactions that are scheduled within the specified period.
      *
-     * @param from the start date of the range
-     * @param to the end date of the range
-     * @return a list of transactions generated for the specified date range
+     * @param period the period within which to generate transactions
+     * @return a list of transactions that will occur within the specified period
      */
-    List<Transaction> generate(LocalDate from, LocalDate to);
+    List<Transaction> generate(Period period);
+
+    /**
+     * Generates a list of transactions that are scheduled between the specified dates.
+     *
+     * @param from the start date of the period
+     * @param to   the end date of the period
+     * @return a list of transactions that will occur between the specified dates
+     */
+    default List<Transaction> generate(LocalDate from, LocalDate to) {
+        return generate(Period.of(from, to));
+    }
 }

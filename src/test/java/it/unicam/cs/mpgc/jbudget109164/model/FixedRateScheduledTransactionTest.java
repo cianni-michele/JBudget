@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.FixedRateScheduledTransaction;
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.TransactionFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,36 +40,36 @@ class FixedRateScheduledTransactionTest {
         @Test
         @DisplayName("should throw NullPointerException when start date is null")
         void shouldThrowNullPointerExceptionWhenStartDateIsNull() {
-            assertThrows(NullPointerException.class, () -> new FixedRateScheduledTransaction(transactionFactory,null, END_DATE, AMOUNT, DESCRIPTION, Set.of(), 1));
+            assertThrows(NullPointerException.class, () -> new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(null, END_DATE), DESCRIPTION, Set.of(), 1));
         }
 
         @Test
         @DisplayName("should throw NullPointerException when end date is null")
         void shouldThrowNullPointerExceptionWhenEndDateIsNull() {
-            assertThrows(NullPointerException.class, () -> new FixedRateScheduledTransaction(transactionFactory, START_DATE, null, AMOUNT, DESCRIPTION, Set.of(), 1));
+            assertThrows(NullPointerException.class, () -> new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, null), DESCRIPTION, Set.of(), 1));
         }
 
         @Test
         @DisplayName("should throw IllegalArgumentException when amount is negative")
         void shouldThrowIllegalArgumentExceptionWhenAmountIsNegative() {
-            assertThrows(IllegalArgumentException.class, () -> new FixedRateScheduledTransaction(transactionFactory, START_DATE, START_DATE, -100.0, DESCRIPTION, Set.of(), 1));
+            assertThrows(IllegalArgumentException.class, () -> new FixedRateScheduledTransaction(transactionFactory, -100.0, Period.of(START_DATE, START_DATE), DESCRIPTION, Set.of(), 1));
         }
 
         @Test
         @DisplayName("should not throw exception when description is null")
         void shouldDoesNotThrowExceptionWhenDescriptionIsNull() {
-            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, START_DATE, END_DATE, AMOUNT, null, Set.of(), 1));
+            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, END_DATE), null, Set.of(), 1));
         }
 
         @Test
         @DisplayName("should create instance with valid parameters")
         void shouldCreateInstanceWithValidParameters() {
-            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, START_DATE, END_DATE, AMOUNT, DESCRIPTION, Set.of(), 1));
+            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, END_DATE), DESCRIPTION, Set.of(), 1));
         }
 
         @Test
         void shouldCreateInstanceWithEmptyTagsWhenTagsAreNull() {
-            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, START_DATE, END_DATE, AMOUNT, DESCRIPTION, null, 1));
+            assertDoesNotThrow(() -> new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, END_DATE), DESCRIPTION, null, 1));
         }
 
     }
@@ -79,21 +80,21 @@ class FixedRateScheduledTransactionTest {
 
         @BeforeEach
         void init() {
-            scheduledTransaction = new FixedRateScheduledTransaction(transactionFactory, START_DATE, END_DATE, AMOUNT, DESCRIPTION, Set.of(), 1);
+            scheduledTransaction = new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, END_DATE), DESCRIPTION, Set.of(), 1);
         }
 
         @Test
         @DisplayName("should throw NullPointerException when from date is null")
         void shouldThrowNullPointerExceptionWhenFromIsNull() {
             LocalDate to = LocalDate.of(2025, 6, 10);
-            assertThrows(NullPointerException.class, () -> scheduledTransaction.generate(null, to));
+            assertThrows(NullPointerException.class, () -> scheduledTransaction.generate(Period.of(null, to)));
         }
 
         @Test
         @DisplayName("should throw NullPointerException when to date is null")
         void shouldThrowNullPointerExceptionWhenToIsNull() {
             LocalDate from = LocalDate.of(2025, 6, 10);
-            assertThrows(NullPointerException.class, () -> scheduledTransaction.generate(from, null));
+            assertThrows(NullPointerException.class, () -> scheduledTransaction.generate(Period.of(from, null)));
         }
 
         @Test
@@ -101,7 +102,7 @@ class FixedRateScheduledTransactionTest {
         void shouldThrowIllegalArgumentExceptionWhenFromAfterTo() {
             LocalDate from = LocalDate.of(2025, 6, 10);
             LocalDate to = LocalDate.of(2025, 6, 1);
-            assertThrows(IllegalArgumentException.class, () -> scheduledTransaction.generate(from, to));
+            assertThrows(IllegalArgumentException.class, () -> scheduledTransaction.generate(Period.of(from, to)));
         }
 
         @Test
@@ -112,7 +113,7 @@ class FixedRateScheduledTransactionTest {
 
             when(transactionFactory.createTransaction(any(), anyDouble(), anyString(), anySet()))
                     .thenReturn(mock(Transaction.class));
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(4, transactions.size());
         }
@@ -127,7 +128,7 @@ class FixedRateScheduledTransactionTest {
             when(transactionFactory.createTransaction(any(), anyDouble(), anyString(), anySet()))
                     .thenReturn(mock(Transaction.class));
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(4, transactions.size());
         }
@@ -138,7 +139,7 @@ class FixedRateScheduledTransactionTest {
             LocalDate from = LocalDate.of(2024, 1, 1);
             LocalDate to = LocalDate.of(2024, 2, 1);
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertTrue(transactions.isEmpty());
         }
@@ -153,7 +154,7 @@ class FixedRateScheduledTransactionTest {
             LocalDate from = LocalDate.of(2025, 6, 1);
             LocalDate to = LocalDate.of(2025, 6, 30);
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(1, transactions.size());
             verify(transactionFactory).createTransaction(
@@ -171,7 +172,7 @@ class FixedRateScheduledTransactionTest {
 
         @BeforeEach
         void setUp() {
-            scheduledTransaction = new FixedRateScheduledTransaction(transactionFactory, START_DATE, END_DATE, AMOUNT, DESCRIPTION, Set.of(), 15);
+            scheduledTransaction = new FixedRateScheduledTransaction(transactionFactory, AMOUNT, Period.of(START_DATE, END_DATE), DESCRIPTION, Set.of(), 15);
         }
 
         @Test
@@ -182,7 +183,7 @@ class FixedRateScheduledTransactionTest {
 
             mockTransactionsForDates();
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(4, transactions.size());
         }
@@ -195,7 +196,7 @@ class FixedRateScheduledTransactionTest {
 
             mockTransactionsForDates();
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(LocalDate.of(2025, 5, 15), transactions.getFirst().date());
         }
@@ -208,7 +209,7 @@ class FixedRateScheduledTransactionTest {
 
             mockTransactionsForDates();
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(LocalDate.of(2025, 6, 15), transactions.get(1).date());
         }
@@ -221,7 +222,7 @@ class FixedRateScheduledTransactionTest {
 
             mockTransactionsForDates();
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(LocalDate.of(2025, 7, 15), transactions.get(2).date());
         }
@@ -234,7 +235,7 @@ class FixedRateScheduledTransactionTest {
 
             mockTransactionsForDates();
 
-            List<Transaction> transactions = scheduledTransaction.generate(from, to);
+            List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
             assertEquals(LocalDate.of(2025, 8, 15), transactions.get(3).date());
         }

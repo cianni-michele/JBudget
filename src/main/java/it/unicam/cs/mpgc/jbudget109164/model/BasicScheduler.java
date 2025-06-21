@@ -1,8 +1,8 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.ScheduledTransaction;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -47,15 +47,9 @@ public class BasicScheduler implements Scheduler, Iterable<ScheduledTransaction>
     }
 
     @Override
-    public List<ScheduledTransaction> getUpcomingTransactions(LocalDate from, LocalDate to) {
-        requireNonNull(from, "From date cannot be null");
-        requireNonNull(to, "To date cannot be null");
-        if (from.isAfter(to)) {
-            throw new IllegalArgumentException("From date cannot be after to date");
-        }
-
+    public List<ScheduledTransaction> getUpcomingTransactions(Period period) {
         return stream().filter(
-                t -> !t.generate(from, to).isEmpty()
+                t -> !t.generate(period).isEmpty()
         ).toList();
     }
 

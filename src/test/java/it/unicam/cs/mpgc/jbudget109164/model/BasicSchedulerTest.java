@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.ScheduledTransaction;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,10 +67,9 @@ class BasicSchedulerTest {
             LocalDate from = LocalDate.of(2025, 1, 1);
             LocalDate to = LocalDate.of(2025, 1, 31);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
-            assertTrue(result.isEmpty(),
-                    "Expected empty list when there are no scheduled transactions");
+            assertTrue(result.isEmpty(), "Expected empty list when there are no scheduled transactions");
         }
 
 
@@ -80,20 +80,20 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction startBoundaryTx = mock(ScheduledTransaction.class);
-            when(startBoundaryTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(startBoundaryTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             ScheduledTransaction endBoundaryTx = mock(ScheduledTransaction.class);
-            when(endBoundaryTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(endBoundaryTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(startBoundaryTx);
             scheduler.addScheduledTransaction(endBoundaryTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertEquals(2, result.size(), "Both boundary transactions should be included");
 
-            verify(startBoundaryTx).generate(from, to);
-            verify(endBoundaryTx).generate(from, to);
+            verify(startBoundaryTx).generate(Period.of(from, to));
+            verify(endBoundaryTx).generate(Period.of(from, to));
         }
 
         @Test
@@ -103,11 +103,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction startBoundaryTx = mock(ScheduledTransaction.class);
-            when(startBoundaryTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(startBoundaryTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(startBoundaryTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertTrue(result.contains(startBoundaryTx), "Transaction at the start boundary should be included");
         }
@@ -119,11 +119,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction endBoundaryTx = mock(ScheduledTransaction.class);
-            when(endBoundaryTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(endBoundaryTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(endBoundaryTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertTrue(result.contains(endBoundaryTx), "Transaction at the end boundary should be included");
         }
@@ -137,15 +137,16 @@ class BasicSchedulerTest {
             ScheduledTransaction validTx = mock(ScheduledTransaction.class);
             ScheduledTransaction emptyTx = mock(ScheduledTransaction.class);
 
-            when(validTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
-            when(emptyTx.generate(from, to)).thenReturn(List.of());
+            when(validTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
+            when(emptyTx.generate(Period.of(from, to))).thenReturn(List.of());
 
             scheduler.addScheduledTransaction(validTx);
             scheduler.addScheduledTransaction(emptyTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
-            assertEquals(1, result.size(), "Only transactions that generate results should be included");
+            assertEquals(1, result.size(),
+                    "Only transactions that generate results should be included");
         }
 
         @Test
@@ -155,11 +156,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction validTx = mock(ScheduledTransaction.class);
-            when(validTx.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(validTx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(validTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertTrue(result.contains(validTx), "Valid transaction should be included");
         }
@@ -171,11 +172,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction emptyTx = mock(ScheduledTransaction.class);
-            when(emptyTx.generate(from, to)).thenReturn(List.of());
+            when(emptyTx.generate(Period.of(from, to))).thenReturn(List.of());
 
             scheduler.addScheduledTransaction(emptyTx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertFalse(result.contains(emptyTx), "Empty transaction should be excluded");
         }
@@ -187,7 +188,8 @@ class BasicSchedulerTest {
 
             scheduler.addScheduledTransaction(tx);
 
-            assertTrue(scheduler.stream().anyMatch(t -> t == tx), "Transaction should be added to scheduler");
+            assertTrue(scheduler.stream().anyMatch(t -> t == tx),
+                    "Transaction should be added to scheduler");
         }
 
         @Test
@@ -198,7 +200,8 @@ class BasicSchedulerTest {
             scheduler.addScheduledTransaction(tx);
             scheduler.removeScheduledTransaction(tx);
 
-            assertFalse(scheduler.stream().anyMatch(t -> t == tx), "Transaction should be removed from scheduler");
+            assertFalse(scheduler.stream().anyMatch(t -> t == tx),
+                    "Transaction should be removed from scheduler");
         }
 
         @Test
@@ -211,7 +214,8 @@ class BasicSchedulerTest {
             scheduler.addScheduledTransaction(tx2);
             scheduler.removeScheduledTransaction(tx1);
 
-            assertTrue(scheduler.stream().anyMatch(t -> t == tx2), "Other transactions should remain after removal");
+            assertTrue(scheduler.stream().anyMatch(t -> t == tx2),
+                    "Other transactions should remain after removal");
         }
 
         @Test
@@ -240,15 +244,15 @@ class BasicSchedulerTest {
             ScheduledTransaction tx2 = mock(ScheduledTransaction.class);
             ScheduledTransaction tx3 = mock(ScheduledTransaction.class);
 
-            when(tx1.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
-            when(tx2.generate(from, to)).thenReturn(List.of(mock(Transaction.class), mock(Transaction.class)));
-            when(tx3.generate(from, to)).thenReturn(List.of());
+            when(tx1.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
+            when(tx2.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class), mock(Transaction.class)));
+            when(tx3.generate(Period.of(from, to))).thenReturn(List.of());
 
             scheduler.addScheduledTransaction(tx1);
             scheduler.addScheduledTransaction(tx2);
             scheduler.addScheduledTransaction(tx3);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertEquals(2, result.size(), "Only transactions that generate results should be returned");
         }
@@ -260,11 +264,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction tx1 = mock(ScheduledTransaction.class);
-            when(tx1.generate(from, to)).thenReturn(List.of(mock(Transaction.class)));
+            when(tx1.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(tx1);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertTrue(result.contains(tx1), "Transaction with single result should be included");
         }
@@ -276,11 +280,11 @@ class BasicSchedulerTest {
             LocalDate to = LocalDate.of(2025, 1, 31);
 
             ScheduledTransaction tx = mock(ScheduledTransaction.class);
-            when(tx.generate(from, to)).thenReturn(List.of(mock(Transaction.class), mock(Transaction.class)));
+            when(tx.generate(Period.of(from, to))).thenReturn(List.of(mock(Transaction.class), mock(Transaction.class)));
 
             scheduler.addScheduledTransaction(tx);
 
-            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(from, to);
+            List<ScheduledTransaction> result = scheduler.getUpcomingTransactions(Period.of(from, to));
 
             assertTrue(result.contains(tx), "Transaction with multiple results should be included");
         }
