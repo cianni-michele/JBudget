@@ -4,11 +4,18 @@ import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import it.unicam.cs.mpgc.jbudget109164.repository.DataManager;
 
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ * This class computes statistics based on transactions and their associated tags.
+ * It aggregates the amounts of transactions by their tags over a specified period.
+ * <p>
+ * This class implements the {@link StatisticsProvider} interface.
+ *
+ * @author Michele Cianni
+ */
 public class DefaultStatisticsProvider implements StatisticsProvider {
+
     @Override
     public Map<String, Double> compute(DataManager data, Period period) {
         List<Transaction> transactions = data.getTransactionsIn(period);
