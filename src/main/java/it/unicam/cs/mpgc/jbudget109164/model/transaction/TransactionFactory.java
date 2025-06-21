@@ -4,6 +4,7 @@ import it.unicam.cs.mpgc.jbudget109164.model.Tag;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Factory interface for creating transactions.
@@ -30,5 +31,16 @@ public interface TransactionFactory {
      * @param transactionDetails the details of the transaction, including description, amount, date, and tags
      * @return a new Transaction object
      */
-    Transaction createTransaction(TransactionDetails transactionDetails);
+    default Transaction createTransaction(TransactionDetails transactionDetails) {
+        return createTransaction(UUID.randomUUID(), transactionDetails);
+    }
+
+    /**
+     * Creates a new transaction with a specific ID and the provided transaction details.
+     *
+     * @param id the unique identifier for the transaction
+     * @param transactionDetails the details of the transaction, including description, amount, date, and tags
+     * @return a new Transaction object with the specified ID
+     */
+    Transaction createTransaction(UUID id, TransactionDetails transactionDetails);
 }
