@@ -8,6 +8,7 @@ import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -23,6 +24,7 @@ public interface DataManager {
      * @param from the start date of the period
      * @param to   the end date of the period
      * @return a list of transactions that occurred between the specified dates
+     * @throws IllegalArgumentException if the 'from' date is after the 'to' date
      */
     default List<Transaction> getTransactionsBetween(LocalDate from, LocalDate to) {
         return getTransactionsIn(Period.of(from, to));
@@ -33,6 +35,7 @@ public interface DataManager {
      *
      * @param period the period to filter transactions
      * @return a list of transactions that occurred within the specified period
+     * @throws NullPointerException if the period is null
      */
     default List<Transaction> getTransactionsIn(Period period) {
         return getTransactions(t ->
@@ -63,6 +66,7 @@ public interface DataManager {
      * Adds a new transaction to the data manager.
      *
      * @param transaction the transaction to add
+     * @throws NullPointerException if the transaction is null
      */
     void add(Transaction transaction);
 
@@ -78,7 +82,7 @@ public interface DataManager {
      *
      * @return a list of all tags
      */
-    List<Tag> getAllTags();
+    Set<Tag> getAllTags();
 
     /**
      * Returns the budget plan associated with this data manager.
