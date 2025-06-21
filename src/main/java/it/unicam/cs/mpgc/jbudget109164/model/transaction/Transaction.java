@@ -19,6 +19,13 @@ public interface Transaction {
     UUID id();
 
     /**
+     * Returns the details of the transaction.
+     *
+     * @return the details of the transaction
+     */
+    TransactionDetails details();
+
+    /**
      * Returns the description of the transaction.
      *
      * @return the description of the transaction

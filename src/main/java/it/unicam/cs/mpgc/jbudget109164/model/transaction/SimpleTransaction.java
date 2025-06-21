@@ -54,6 +54,7 @@ public final class SimpleTransaction implements Transaction {
         this.details = requireNonNull(details, "Transaction details cannot be null");
     }
 
+    @Override
     public TransactionDetails details() {
         return details;
     }
