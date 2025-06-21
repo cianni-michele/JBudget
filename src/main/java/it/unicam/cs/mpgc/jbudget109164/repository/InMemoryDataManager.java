@@ -8,6 +8,14 @@ import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * An in-memory implementation of the DataManager interface that manages transactions and tags.
+ * It provides methods to retrieve, add, and remove transactions, as well as to manage tags and budget plans.
+ * <p>
+ * This class implements the {@link DataManager} interface and uses a {@link Map} to store transactions.
+ *
+ * @author Michele Cianni
+ */
 public class InMemoryDataManager implements DataManager {
 
     private final Map<UUID, Transaction> transactions = new HashMap<>();
