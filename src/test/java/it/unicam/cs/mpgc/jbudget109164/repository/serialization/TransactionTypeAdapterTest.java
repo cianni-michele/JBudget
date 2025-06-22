@@ -38,7 +38,7 @@ class TransactionTypeAdapterTest {
     class DeserializationTests {
 
         @Test
-        void shouldDeserializeTransactionWithoutTags() {
+        void shouldDeserializeSimpleTransactionWithoutTags() {
             String json = """
                     {
                         "id": "00000000-0000-0000-0000-000000000000",
@@ -66,7 +66,7 @@ class TransactionTypeAdapterTest {
         }
 
         @Test
-        void shouldDeserializeTransactionWithSingleTag() {
+        void shouldDeserializeSimpleTransactionWithSingleTag() {
             String json = """
                     {
                         "id": "00000000-0000-0000-0000-000000000001",
@@ -100,7 +100,7 @@ class TransactionTypeAdapterTest {
         }
 
         @Test
-        void shouldDeserializeTransactionWithMultipleTags() {
+        void shouldDeserializeSimpleTransactionWithMultipleTags() {
             String json = """
                     {
                         "id": "00000000-0000-0000-0000-000000000002",
@@ -142,7 +142,7 @@ class TransactionTypeAdapterTest {
     @Nested
     class SerializationTests {
         @Test
-        void shouldSerializeTransactionWithoutTags() {
+        void shouldSerializeSimpleTransactionWithoutTags() {
             Transaction transaction = new SimpleTransaction(
                     UUID.fromString("00000000-0000-0000-0000-000000000004"),
                     new TransactionDetails(
@@ -170,7 +170,7 @@ class TransactionTypeAdapterTest {
         }
 
         @Test
-        void shouldSerializeTransactionWithSingleTag() {
+        void shouldSerializeSimpleTransactionWithSingleTag() {
             Tag tag = tagFactory.createTag("Single Tag");
             Transaction transaction = new SimpleTransaction(
                     UUID.fromString("00000000-0000-0000-0000-000000000005"),
@@ -204,7 +204,7 @@ class TransactionTypeAdapterTest {
         }
 
         @Test
-        void shouldSerializeTransactionWithMultipleTags() {
+        void shouldSerializeSimpleTransactionWithMultipleTags() {
             Tag tagOne = tagFactory.createTag("Tag One");
             Tag tagTwo = tagFactory.createTag("Tag Two");
             Transaction transaction = new SimpleTransaction(
