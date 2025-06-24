@@ -59,6 +59,26 @@ public abstract class Tag {
     }
 
     /**
+     * Returns an unmodifiable set of all ancestor tags, excluding the tag itself.
+     * This method collects all parent tags recursively to provide a complete hierarchy.
+     *
+     * @return an unmodifiable set of all ancestor tags
+     */
+    public Set<Tag> getAllAncestors() {
+        Set<Tag> ancestors = new HashSet<>();
+        collectAncestors(this, ancestors);
+        return Set.copyOf(ancestors);
+    }
+
+    private void collectAncestors(Tag tag, Set<Tag> visited) {
+        for (Tag parent : tag.getParents()) {
+            if (visited.add(parent)) { // Only add if not already visited
+                collectAncestors(parent, visited);
+            }
+        }
+    }
+
+    /**
      * Returns an unmodifiable set of parent tags.
      * This method provides a read-only view of the parent tags to prevent external modification.
      *
@@ -66,6 +86,26 @@ public abstract class Tag {
      */
     public Set<Tag> getChildren() {
         return Set.copyOf(children);
+    }
+
+    /**
+     * Returns an unmodifiable set of all descendant tags, excluding the tag itself.
+     * This method collects all child tags recursively to provide a complete hierarchy.
+     *
+     * @return an unmodifiable set of all descendant tags
+     */
+    public Set<Tag> getAllDescendants() {
+        Set<Tag> descendants = new HashSet<>();
+        collectDiscendants(this, descendants);
+        return Set.copyOf(descendants);
+    }
+
+    private void collectDiscendants(Tag tag, Set<Tag> visited) {
+        for (Tag child : tag.getChildren()) {
+            if (visited.add(child)) { // Only add if not already visited
+                collectDiscendants(child, visited);
+            }
+        }
     }
 
     /**
