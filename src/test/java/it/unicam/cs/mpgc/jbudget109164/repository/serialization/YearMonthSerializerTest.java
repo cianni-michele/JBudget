@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 //TODO: Implement tests for YearMonthTypeAdapter
-class YearMonthTypeAdapterTest {
+class YearMonthSerializerTest {
 
     @BeforeEach
     void setUp() {

@@ -6,7 +6,15 @@ import java.lang.reflect.Type;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
-public class YearMonthTypeAdapter implements JsonDeserializer<YearMonth>, JsonSerializer<YearMonth> {
+/**
+ * This class is responsible for serializing and deserializing
+ * {@link YearMonth} objects to and from JSON format.
+ * <p>
+ * It implements the {@link CustomSerializer} interface.
+ *
+ * @author Michele Cianni
+ */
+public class YearMonthSerializer implements CustomSerializer<YearMonth> {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
