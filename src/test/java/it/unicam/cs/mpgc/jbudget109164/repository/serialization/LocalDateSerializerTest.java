@@ -9,14 +9,14 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LocalDateTypeAdapterTest {
+class LocalDateSerializerTest {
 
     private Gson gson;
 
     @BeforeEach
     void setUp() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+                .registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
                 .create();
     }
 

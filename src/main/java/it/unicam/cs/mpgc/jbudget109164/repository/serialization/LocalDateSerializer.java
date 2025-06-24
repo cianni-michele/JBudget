@@ -9,11 +9,11 @@ import java.time.LocalDate;
  * This class is responsible for serializing and deserializing
  * {@link LocalDate} objects to and from JSON format.
  * <p>
- * It implements the {@link JsonSerializer} and {@link JsonDeserializer} interfaces.
+ * It implements the {@link CustomSerializer} interface.
  *
  * @author Michele Cianni
  */
-public class LocalDateTypeAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
+public class LocalDateSerializer implements CustomSerializer<LocalDate> {
 
     @Override
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
