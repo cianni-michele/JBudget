@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-public class BasicScheduler implements Scheduler, Iterable<ScheduledTransaction> {
+public final class BasicScheduler implements Scheduler, Iterable<ScheduledTransaction> {
 
     private final List<ScheduledTransaction> scheduledTransactions = new ArrayList<>();
 
