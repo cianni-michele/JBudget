@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model.transaction;
 
-import it.unicam.cs.mpgc.jbudget109164.model.Tag;
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

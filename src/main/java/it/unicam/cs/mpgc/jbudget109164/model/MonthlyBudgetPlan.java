@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
+
 import java.time.YearMonth;
 import java.util.*;
 
@@ -13,7 +15,7 @@ import java.util.*;
  * @author Michele Cianni
  * @see BudgetPlan
  */
-public class MonthlyBudgetPlan implements BudgetPlan {
+public final class MonthlyBudgetPlan implements BudgetPlan {
 
     private final Map<BudgetKey, Double> expectedAmounts = new HashMap<>();
 

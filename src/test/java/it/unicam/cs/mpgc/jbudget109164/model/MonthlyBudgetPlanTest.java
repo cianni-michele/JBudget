@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.jbudget109164.model;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

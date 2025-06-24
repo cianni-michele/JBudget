@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import it.unicam.cs.mpgc.jbudget109164.repository.DataManager;
@@ -48,7 +49,7 @@ class DefaultStatisticsProviderTest {
         void shouldSumSingleTransactionByTag() {
             String tagName = "Shopping";
             Tag tag = mock(Tag.class);
-            when(tag.name()).thenReturn(tagName);
+            when(tag.getName()).thenReturn(tagName);
 
             Transaction transaction = mock(Transaction.class);
             when(transaction.amount()).thenReturn(50.0);
@@ -71,7 +72,7 @@ class DefaultStatisticsProviderTest {
         void shouldSumMultipleTransactionsSameTag() {
             String tagName = "Food";
             Tag tag = mock(Tag.class);
-            when(tag.name()).thenReturn(tagName);
+            when(tag.getName()).thenReturn(tagName);
 
             Transaction transaction1 = mock(Transaction.class);
             when(transaction1.amount()).thenReturn(25.0);
@@ -99,11 +100,11 @@ class DefaultStatisticsProviderTest {
         void shouldComputeSeparateSumsForDifferentTags() {
             String foodTagName = "Food";
             Tag foodTag = mock(Tag.class);
-            when(foodTag.name()).thenReturn(foodTagName);
+            when(foodTag.getName()).thenReturn(foodTagName);
 
             String transportTagName = "Transport";
             Tag transportTag = mock(Tag.class);
-            when(transportTag.name()).thenReturn(transportTagName);
+            when(transportTag.getName()).thenReturn(transportTagName);
 
             Transaction transaction1 = mock(Transaction.class);
             when(transaction1.amount()).thenReturn(50.0);

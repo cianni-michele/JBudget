@@ -1,6 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model.transaction;
 
-import it.unicam.cs.mpgc.jbudget109164.model.Tag;
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
 import java.time.LocalDate;
 import java.util.Collections;

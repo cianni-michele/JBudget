@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 import it.unicam.cs.mpgc.jbudget109164.repository.DataManager;
@@ -14,7 +15,7 @@ import java.util.*;
  *
  * @author Michele Cianni
  */
-public class DefaultStatisticsProvider implements StatisticsProvider {
+public final class DefaultStatisticsProvider implements StatisticsProvider {
 
     @Override
     public Map<String, Double> compute(DataManager data, Period period) {
@@ -27,7 +28,7 @@ public class DefaultStatisticsProvider implements StatisticsProvider {
         Map<String, Double> result = new HashMap<>();
         for (Transaction transaction : transactions) {
             for (Tag tag : transaction.tags()) {
-                String tagName = tag.name();
+                String tagName = tag.getName();
                 double amount = transaction.amount();
                 result.put(tagName, result.getOrDefault(tagName, 0.0) + amount);
             }

@@ -2,10 +2,13 @@ package it.unicam.cs.mpgc.jbudget109164.repository;
 
 import it.unicam.cs.mpgc.jbudget109164.model.BudgetPlan;
 import it.unicam.cs.mpgc.jbudget109164.model.Scheduler;
-import it.unicam.cs.mpgc.jbudget109164.model.Tag;
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 

@@ -2,7 +2,7 @@ package it.unicam.cs.mpgc.jbudget109164.repository;
 
 import it.unicam.cs.mpgc.jbudget109164.model.BudgetPlan;
 import it.unicam.cs.mpgc.jbudget109164.model.Scheduler;
-import it.unicam.cs.mpgc.jbudget109164.model.Tag;
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
 
