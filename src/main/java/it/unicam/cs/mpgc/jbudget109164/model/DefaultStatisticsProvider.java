@@ -27,9 +27,9 @@ public final class DefaultStatisticsProvider implements StatisticsProvider {
 
         Map<String, Double> result = new HashMap<>();
         for (Transaction transaction : transactions) {
-            for (Tag tag : transaction.tags()) {
+            for (Tag tag : transaction.getTags()) {
                 String tagName = tag.getName();
-                double amount = transaction.amount();
+                double amount = transaction.getAmount();
                 result.put(tagName, result.getOrDefault(tagName, 0.0) + amount);
             }
         }

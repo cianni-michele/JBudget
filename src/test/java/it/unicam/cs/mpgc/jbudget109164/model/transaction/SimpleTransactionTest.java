@@ -38,38 +38,38 @@ class SimpleTransactionTest {
     @Test
     @DisplayName("Should return the UUID provided in constructor")
     void shouldReturnId() {
-        assertEquals(id, transaction.id());
+        assertEquals(id, transaction.getId());
     }
 
     @Test
     @DisplayName("Should return the description provided in constructor")
     void shouldReturnDescription() {
-        assertEquals(description, transaction.description());
+        assertEquals(description, transaction.getDescription());
     }
 
     @Test
     @DisplayName("Should return the amount provided in constructor")
     void shouldReturnAmount() {
-        assertEquals(amount, transaction.amount());
+        assertEquals(amount, transaction.getAmount());
     }
 
     @Test
     @DisplayName("Should return the date provided in constructor")
     void shouldReturnDate() {
-        assertEquals(date, transaction.date());
+        assertEquals(date, transaction.getDate());
     }
 
     @Test
     @DisplayName("Should return the tags provided in constructor")
     void shouldReturnTags() {
-        assertEquals(tags, transaction.tags());
+        assertEquals(tags, transaction.getTags());
     }
 
     @Test
     @DisplayName("Should return an unmodifiable tags set")
     void shouldReturnUnmodifiableTagsSet() {
 
-        Set<Tag> returnedTags = transaction.tags();
+        Set<Tag> returnedTags = transaction.getTags();
         assertThrows(UnsupportedOperationException.class,
                 () -> returnedTags.add(mock(Tag.class)));
     }

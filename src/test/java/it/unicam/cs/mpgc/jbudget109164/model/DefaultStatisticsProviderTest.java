@@ -52,9 +52,9 @@ class DefaultStatisticsProviderTest {
             when(tag.getName()).thenReturn(tagName);
 
             Transaction transaction = mock(Transaction.class);
-            when(transaction.amount()).thenReturn(50.0);
-            when(transaction.date()).thenReturn(LocalDate.of(2025, 6, 15));
-            when(transaction.tags()).thenReturn(Set.of(tag));
+            when(transaction.getAmount()).thenReturn(50.0);
+            when(transaction.getDate()).thenReturn(LocalDate.of(2025, 6, 15));
+            when(transaction.getTags()).thenReturn(Set.of(tag));
 
             LocalDate from = LocalDate.of(2025, 6, 1);
             LocalDate to = LocalDate.of(2025, 6, 30);
@@ -75,14 +75,14 @@ class DefaultStatisticsProviderTest {
             when(tag.getName()).thenReturn(tagName);
 
             Transaction transaction1 = mock(Transaction.class);
-            when(transaction1.amount()).thenReturn(25.0);
-            when(transaction1.date()).thenReturn(LocalDate.of(2025, 7, 10));
-            when(transaction1.tags()).thenReturn(Set.of(tag));
+            when(transaction1.getAmount()).thenReturn(25.0);
+            when(transaction1.getDate()).thenReturn(LocalDate.of(2025, 7, 10));
+            when(transaction1.getTags()).thenReturn(Set.of(tag));
 
             Transaction transaction2 = mock(Transaction.class);
-            when(transaction2.amount()).thenReturn(35.0);
-            when(transaction2.date()).thenReturn(LocalDate.of(2025, 7, 20));
-            when(transaction2.tags()).thenReturn(Set.of(tag));
+            when(transaction2.getAmount()).thenReturn(35.0);
+            when(transaction2.getDate()).thenReturn(LocalDate.of(2025, 7, 20));
+            when(transaction2.getTags()).thenReturn(Set.of(tag));
 
             LocalDate from = LocalDate.of(2025, 7, 1);
             LocalDate to = LocalDate.of(2025, 7, 31);
@@ -107,14 +107,14 @@ class DefaultStatisticsProviderTest {
             when(transportTag.getName()).thenReturn(transportTagName);
 
             Transaction transaction1 = mock(Transaction.class);
-            when(transaction1.amount()).thenReturn(50.0);
-            when(transaction1.date()).thenReturn(LocalDate.of(2025, 8, 5));
-            when(transaction1.tags()).thenReturn(Set.of(foodTag));
+            when(transaction1.getAmount()).thenReturn(50.0);
+            when(transaction1.getDate()).thenReturn(LocalDate.of(2025, 8, 5));
+            when(transaction1.getTags()).thenReturn(Set.of(foodTag));
 
             Transaction transaction2 = mock(Transaction.class);
-            when(transaction2.amount()).thenReturn(30.0);
-            when(transaction2.date()).thenReturn(LocalDate.of(2025, 8, 15));
-            when(transaction2.tags()).thenReturn(Set.of(transportTag));
+            when(transaction2.getAmount()).thenReturn(30.0);
+            when(transaction2.getDate()).thenReturn(LocalDate.of(2025, 8, 15));
+            when(transaction2.getTags()).thenReturn(Set.of(transportTag));
 
             LocalDate from = LocalDate.of(2025, 8, 1);
             LocalDate to = LocalDate.of(2025, 8, 31);

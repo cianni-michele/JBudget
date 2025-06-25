@@ -42,7 +42,7 @@ class SimpleTransactionFactoryTest {
         Transaction transaction1 = factory.createTransaction(transactionDetails);
         Transaction transaction2 = factory.createTransaction(transactionDetails);
 
-        assertNotEquals(transaction1.id(), transaction2.id());
+        assertNotEquals(transaction1.getId(), transaction2.getId());
     }
 
     @Test
@@ -52,6 +52,6 @@ class SimpleTransactionFactoryTest {
 
         Transaction transaction = factory.createTransaction(transactionDetails);
 
-        assertEquals(transactionDetails, transaction.details());
+        assertEquals(transactionDetails, transaction.getDetails());
     }
 }

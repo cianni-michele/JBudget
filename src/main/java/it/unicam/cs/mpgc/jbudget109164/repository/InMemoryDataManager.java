@@ -37,7 +37,7 @@ public class InMemoryDataManager implements DataManager {
     public void add(Transaction transaction) {
         Optional.ofNullable(transaction)
                 .ifPresentOrElse(
-                        t -> transactions.put(t.id(), t),
+                        t -> transactions.put(t.getId(), t),
                         () -> {
                             throw new IllegalArgumentException("Transaction cannot be null");
                         }
@@ -59,7 +59,7 @@ public class InMemoryDataManager implements DataManager {
     @Override
     public Set<Tag> getAllTags() {
         return transactions.values().stream()
-                .flatMap(t -> t.tags().stream())
+                .flatMap(t -> t.getTags().stream())
                 .collect(Collectors.toUnmodifiableSet());
     }
 

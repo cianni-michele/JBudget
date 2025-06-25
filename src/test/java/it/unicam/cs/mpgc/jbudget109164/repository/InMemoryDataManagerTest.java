@@ -61,13 +61,13 @@ class InMemoryDataManagerTest {
         void shouldRemoveTransactionSuccessfully() {
             Transaction t1 = mock(Transaction.class);
             UUID id = UUID.randomUUID();
-            when(t1.id()).thenReturn(id);
+            when(t1.getId()).thenReturn(id);
 
             manager.add(t1);
             manager.removeTransaction(id);
 
             List<Transaction> all = manager.getAllTransactions();
-            assertFalse(all.stream().anyMatch(t -> t.id().equals(id)));
+            assertFalse(all.stream().anyMatch(t -> t.getId().equals(id)));
         }
 
         @Test
@@ -75,7 +75,7 @@ class InMemoryDataManagerTest {
         void shouldNotRemoveNonExistingTransaction() {
             Transaction t = mock(Transaction.class);
             UUID id = UUID.randomUUID();
-            when(t.id()).thenReturn(id);
+            when(t.getId()).thenReturn(id);
 
             manager.add(t);
             UUID nonExistent = UUID.randomUUID();
@@ -100,9 +100,9 @@ class InMemoryDataManagerTest {
             t2 = mock(Transaction.class);
             t3 = mock(Transaction.class);
 
-            when(t1.date()).thenReturn(LocalDate.of(2025, 1, 1));
-            when(t2.date()).thenReturn(LocalDate.of(2025, 6, 15));
-            when(t3.date()).thenReturn(LocalDate.of(2025, 12, 31));
+            when(t1.getDate()).thenReturn(LocalDate.of(2025, 1, 1));
+            when(t2.getDate()).thenReturn(LocalDate.of(2025, 6, 15));
+            when(t3.getDate()).thenReturn(LocalDate.of(2025, 12, 31));
 
             doReturn(List.of(t1, t2, t3)).when(spyManager).getAllTransactions();
         }
@@ -131,7 +131,7 @@ class InMemoryDataManagerTest {
         @Test
         @DisplayName("should filter transactions by custom predicate")
         void shouldFilterTransactionsByCustomPredicate() {
-            Predicate<Transaction> filter = t -> !t.date().isAfter(LocalDate.of(2025, 6, 15));
+            Predicate<Transaction> filter = t -> !t.getDate().isAfter(LocalDate.of(2025, 6, 15));
 
             List<Transaction> result = spyManager.getTransactions(filter);
             assertEquals(List.of(t1, t2), result);
@@ -151,11 +151,11 @@ class InMemoryDataManagerTest {
             Transaction t1 = mock(Transaction.class);
             Transaction t2 = mock(Transaction.class);
 
-            when(t1.id()).thenReturn(UUID.randomUUID());
-            when(t2.id()).thenReturn(UUID.randomUUID());
+            when(t1.getId()).thenReturn(UUID.randomUUID());
+            when(t2.getId()).thenReturn(UUID.randomUUID());
 
-            when(t1.tags()).thenReturn(Set.of(tag1));
-            when(t2.tags()).thenReturn(Set.of(tag1, tag2));
+            when(t1.getTags()).thenReturn(Set.of(tag1));
+            when(t2.getTags()).thenReturn(Set.of(tag1, tag2));
 
             manager.add(t1);
             manager.add(t2);

@@ -12,8 +12,8 @@ import com.google.gson.Gson;
  *
  * @author Michele Cianni
  */
-@FunctionalInterface
-public interface JsonPersistenceConfiguration {
+
+public interface JsonRepositoryConfig {
 
     /**
      * Configures a Gson instance with custom type adapters.

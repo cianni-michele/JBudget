@@ -23,6 +23,20 @@ public class SimpleTransaction implements Transaction {
     private final UUID id;
     private final TransactionDetails details;
 
+    public SimpleTransaction(String id,
+                             String description,
+                             double amount,
+                             String date,
+                             Set<Tag> tags) {
+        this(UUID.fromString(requireNonNull(id, "ID cannot be null")),
+                new TransactionDetails(
+                        requireNonNullElse(description, ""),
+                        amount,
+                        LocalDate.parse(requireNonNull(date, "Date cannot be null")),
+                        requireNonNullElse(tags, Set.of())
+                ));
+    }
+
     /**
      * Constructs a SimpleTransaction with the specified parameters.
      *
@@ -54,32 +68,32 @@ public class SimpleTransaction implements Transaction {
     }
 
     @Override
-    public TransactionDetails details() {
+    public TransactionDetails getDetails() {
         return details;
     }
 
     @Override
-    public UUID id() {
+    public UUID getId() {
         return id;
     }
 
     @Override
-    public String description() {
+    public String getDescription() {
         return details.description();
     }
 
     @Override
-    public double amount() {
+    public double getAmount() {
         return details.amount();
     }
 
     @Override
-    public LocalDate date() {
+    public LocalDate getDate() {
         return details.date();
     }
 
     @Override
-    public Set<Tag> tags() {
+    public Set<Tag> getTags() {
         return details.tags();
     }
 

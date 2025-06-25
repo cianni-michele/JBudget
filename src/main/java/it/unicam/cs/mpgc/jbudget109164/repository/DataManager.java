@@ -39,7 +39,7 @@ public interface DataManager {
      */
     default List<Transaction> getTransactionsIn(Period period) {
         return getTransactions(t ->
-                !t.date().isBefore(period.from()) && !t.date().isAfter(period.to())
+                !t.getDate().isBefore(period.from()) && !t.getDate().isAfter(period.to())
         );
     }
 

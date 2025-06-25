@@ -194,7 +194,7 @@ class FixedRateScheduledTransactionTest {
 
             List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
-            assertEquals(LocalDate.of(2025, 5, 15), transactions.getFirst().date());
+            assertEquals(LocalDate.of(2025, 5, 15), transactions.getFirst().getDate());
         }
 
         @Test
@@ -207,7 +207,7 @@ class FixedRateScheduledTransactionTest {
 
             List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
-            assertEquals(LocalDate.of(2025, 6, 15), transactions.get(1).date());
+            assertEquals(LocalDate.of(2025, 6, 15), transactions.get(1).getDate());
         }
 
         @Test
@@ -220,7 +220,7 @@ class FixedRateScheduledTransactionTest {
 
             List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
-            assertEquals(LocalDate.of(2025, 7, 15), transactions.get(2).date());
+            assertEquals(LocalDate.of(2025, 7, 15), transactions.get(2).getDate());
         }
 
         @Test
@@ -233,22 +233,22 @@ class FixedRateScheduledTransactionTest {
 
             List<Transaction> transactions = scheduledTransaction.generate(Period.of(from, to));
 
-            assertEquals(LocalDate.of(2025, 8, 15), transactions.get(3).date());
+            assertEquals(LocalDate.of(2025, 8, 15), transactions.get(3).getDate());
         }
 
         // Helper method to mock transactions for specific dates
         private void mockTransactionsForDates() {
             Transaction mayTransaction = mock(Transaction.class);
-            when(mayTransaction.date()).thenReturn(LocalDate.of(2025, 5, 15));
+            when(mayTransaction.getDate()).thenReturn(LocalDate.of(2025, 5, 15));
 
             Transaction junTransaction = mock(Transaction.class);
-            when(junTransaction.date()).thenReturn(LocalDate.of(2025, 6, 15));
+            when(junTransaction.getDate()).thenReturn(LocalDate.of(2025, 6, 15));
 
             Transaction julTransaction = mock(Transaction.class);
-            when(julTransaction.date()).thenReturn(LocalDate.of(2025, 7, 15));
+            when(julTransaction.getDate()).thenReturn(LocalDate.of(2025, 7, 15));
 
             Transaction augTransaction = mock(Transaction.class);
-            when(augTransaction.date()).thenReturn(LocalDate.of(2025, 8, 15));
+            when(augTransaction.getDate()).thenReturn(LocalDate.of(2025, 8, 15));
 
             when(transactionFactory.createTransaction(eq(LocalDate.of(2025, 5, 15)), anyDouble(), anyString(), anySet()))
                     .thenReturn(mayTransaction);

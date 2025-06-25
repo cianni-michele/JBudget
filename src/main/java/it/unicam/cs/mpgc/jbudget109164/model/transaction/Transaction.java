@@ -16,40 +16,40 @@ public interface Transaction {
      *
      * @return the UUID of the transaction
      */
-    UUID id();
+    UUID getId();
 
     /**
      * Returns the details of the transaction.
      *
      * @return the details of the transaction
      */
-    TransactionDetails details();
+    TransactionDetails getDetails();
 
     /**
      * Returns the description of the transaction.
      *
      * @return the description of the transaction
      */
-    String description();
+    String getDescription();
 
     /**
      * Returns the amount of the transaction.
      *
      * @return the amount of the transaction
      */
-    double amount();
+    double getAmount();
 
     /**
      * Returns the date of the transaction.
      *
      * @return the date of the transaction
      */
-    LocalDate date();
+    LocalDate getDate();
 
     /**
      * Returns the tags associated with the transaction.
      *
      * @return a set of tags associated with the transaction
      */
-    Set<Tag> tags();
+    Set<Tag> getTags();
 }

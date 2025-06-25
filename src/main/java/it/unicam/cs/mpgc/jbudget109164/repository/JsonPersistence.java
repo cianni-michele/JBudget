@@ -18,7 +18,7 @@ public class JsonPersistence implements DataPersistence {
 
     private final Gson gson;
 
-    public JsonPersistence(JsonPersistenceConfiguration configuration) {
+    public JsonPersistence(JsonRepositoryConfig configuration) {
         gson = configuration.getGson();
     }
 
