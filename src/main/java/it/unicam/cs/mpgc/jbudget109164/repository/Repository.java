@@ -46,6 +46,6 @@ public interface Repository<I, D> {
      *
      * @param id the identifier of the dto to delete
      */
-    void delete(I id);
+    void deleteById(I id);
 
 }
