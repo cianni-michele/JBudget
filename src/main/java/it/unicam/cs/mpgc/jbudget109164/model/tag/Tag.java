@@ -20,14 +20,15 @@ public abstract class Tag {
     }
 
     private UUID validateAndGetId(UUID id) {
-        return Optional.ofNullable(id)
-                .orElseThrow(() -> new IllegalArgumentException("Tag ID cannot be null"));
+        return Objects.requireNonNull(id, "Tag ID cannot be null");
     }
 
     private String validateAndGetName(String name) {
-        return Optional.ofNullable(name)
-                .filter(n -> !n.isBlank())
-                .orElseThrow(() -> new IllegalArgumentException("Tag name cannot be null or empty"));
+        Objects.requireNonNull(name, "Tag name cannot be null");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Tag name cannot be blank");
+        }
+        return name;
     }
 
     /**

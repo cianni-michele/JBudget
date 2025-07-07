@@ -5,8 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,15 +15,17 @@ class TagNodeTest {
 
     private static final String TEST_TAG_NAME = "TestTagName";
 
+    private static final Random RANDOM = new Random();
+
     private static TagNode buildTestTag() {
         return buildTagNodeWithName(TEST_TAG_NAME);
     }
 
     private static TagNode buildTagNodeWithName(String name) {
-        return buildTagNodeWithIdAndName(UUID.randomUUID(), name);
+        return buildTagNodeWithIdAndName(RANDOM.nextLong(), name);
     }
 
-    private static TagNode buildTagNodeWithIdAndName(UUID id, String name) {
+    private static TagNode buildTagNodeWithIdAndName(Long id, String name) {
         return new TagNode(id, name);
     }
 

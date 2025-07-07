@@ -5,7 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,9 +19,9 @@ class SimpleTransactionFactoryTest {
     void setUp() {
         transactionDetails = new TransactionDetails(
                 "Test transaction",
-                100.0,
                 LocalDate.now(),
-                Collections.emptySet()
+                new HashSet<>(),
+                new ArrayList<>()
         );
     }
 

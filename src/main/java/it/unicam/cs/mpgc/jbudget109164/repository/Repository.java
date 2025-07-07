@@ -1,7 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * A generic repository interface for managing dto of type D identified by type I.
@@ -25,7 +24,7 @@ public interface Repository<I, D> {
      * @param id the identifier of the dto
      * @return an optional containing the dto if found, or empty if not found
      */
-    Optional<D> findById(I id);
+    D findById(I id);
 
     /**
      * Saves a new dto in the repository.
@@ -48,4 +47,10 @@ public interface Repository<I, D> {
      */
     void deleteById(I id);
 
+    /**
+     * Counts the number of dtos in the repository.
+     *
+     * @return the number of dtos in the repository
+     */
+    int count();
 }

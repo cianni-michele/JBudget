@@ -16,5 +16,5 @@ public interface Mapper<E, D> {
      * @param dto the DTO to convert
      * @return the converted entity, or null if the DTO is null
      */
-    E toEntity(D dto);
+    E toModel(D dto);
 }

@@ -1,31 +1,29 @@
 package it.unicam.cs.mpgc.jbudget109164.utils.mapper.transaction;
 
-import it.unicam.cs.mpgc.jbudget109164.dto.transaction.TransactionDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.TransactionDTO;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.SimpleTransaction;
 import it.unicam.cs.mpgc.jbudget109164.model.transaction.Transaction;
+import it.unicam.cs.mpgc.jbudget109164.utils.mapper.account.AccountMapper;
 import it.unicam.cs.mpgc.jbudget109164.utils.mapper.tag.TagMapper;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class SimpleTransactionMapper extends TransactionMapper {
 
-    public SimpleTransactionMapper(TagMapper tagMapper) {
-        super(tagMapper);
+    public SimpleTransactionMapper(TagMapper tagMapper, AccountMapper accountMapper) {
+        super(tagMapper, accountMapper);
     }
 
     @Override
-    public Transaction mapToEntity(TransactionDTO dto) {
+    public Transaction mapToModel(TransactionDTO dto) {
         return new SimpleTransaction(
                 dto.id(),
-                dto.date(),
-                dto.amount(),
                 dto.description(),
-                dto.tags() != null
-                        ? Arrays.stream(dto.tags()).map(tagMapper::toEntity).collect(Collectors.toSet())
-                        : Collections.emptySet()
+                dto.date(),
+                dto.tags() != null ? Arrays.stream(dto.tags()).map(tagMapper::toModel).collect(Collectors.toSet()) : null,
+                dto.movements() != null ? Arrays.stream(dto.movements()).map(movementMapper::toModel).collect(Collectors.toList()) : null
         );
-
     }
+
 }

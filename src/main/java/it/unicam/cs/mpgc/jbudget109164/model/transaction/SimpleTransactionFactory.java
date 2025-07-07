@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model.transaction;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -11,6 +12,11 @@ import java.util.UUID;
  * @author Michele Cianni
  */
 public class SimpleTransactionFactory implements TransactionFactory {
+
+    @Override
+    public Transaction createTransaction(TransactionDetails transactionDetails) {
+        return createTransaction(UUID.randomUUID(), transactionDetails);
+    }
 
     @Override
     public Transaction createTransaction(UUID id, TransactionDetails transactionDetails) {

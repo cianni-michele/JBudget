@@ -16,9 +16,6 @@ import java.util.UUID;
  */
 public class TagNode extends Tag {
 
-    public TagNode(String id, String name) {
-        super(UUID.fromString(id), name);
-    }
 
     /**
      * Constructs a TagNode with the specified unique identifier and name.

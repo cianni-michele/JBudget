@@ -1,7 +1,7 @@
 package it.unicam.cs.mpgc.jbudget109164.config;
 
 import com.google.gson.Gson;
-import it.unicam.cs.mpgc.jbudget109164.exception.JsonRepositoryConfigException;
+import it.unicam.cs.mpgc.jbudget109164.exception.config.JsonRepositoryConfigException;
 
 import java.io.File;
 

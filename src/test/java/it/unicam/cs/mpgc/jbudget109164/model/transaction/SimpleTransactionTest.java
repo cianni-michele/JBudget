@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.jbudget109164.model.transaction;
 
+import it.unicam.cs.mpgc.jbudget109164.model.Movement;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,20 +22,21 @@ import static org.mockito.Mockito.mock;
 class SimpleTransactionTest {
 
     private UUID id;
-    private String description;
-    private double amount;
-    private LocalDate date;
-    private Set<Tag> tags;
+    private TransactionDetails details;
+    private List<Movement> movements;
+
     private SimpleTransaction transaction;
 
     @BeforeEach
     void setUp() {
         id = UUID.randomUUID();
-        description = "Test transaction";
-        amount = 100.0;
-        date = LocalDate.of(2025, 6, 17);
-        tags = Set.of(mock(Tag.class));
-        transaction = new SimpleTransaction(id, description, amount, date, tags);
+        details = new TransactionDetails(
+                "Test transaction",
+                LocalDate.now(),
+                Set.of(mock(Tag.class)),
+                new ArrayList<>()
+        );
+        transaction = new SimpleTransaction(id, details);
     }
 
     @Test
@@ -44,34 +48,25 @@ class SimpleTransactionTest {
     @Test
     @DisplayName("Should return the description provided in constructor")
     void shouldReturnDescription() {
-        assertEquals(description, transaction.getDescription());
-    }
-
-    @Test
-    @DisplayName("Should return the amount provided in constructor")
-    void shouldReturnAmount() {
-        assertEquals(amount, transaction.getAmount());
+        assertEquals(details.description(), transaction.getDescription());
     }
 
     @Test
     @DisplayName("Should return the date provided in constructor")
     void shouldReturnDate() {
-        assertEquals(date, transaction.getDate());
+        assertEquals(details.date(), transaction.getDate());
     }
 
     @Test
     @DisplayName("Should return the tags provided in constructor")
     void shouldReturnTags() {
-        assertEquals(tags, transaction.getTags());
+        assertEquals(details.tags(), transaction.getTags());
     }
 
     @Test
     @DisplayName("Should return an unmodifiable tags set")
     void shouldReturnUnmodifiableTagsSet() {
-
-        Set<Tag> returnedTags = transaction.getTags();
-        assertThrows(UnsupportedOperationException.class,
-                () -> returnedTags.add(mock(Tag.class)));
+        assertThrows(UnsupportedOperationException.class, () -> transaction.getTags().add(mock(Tag.class)));
     }
 
     @Nested
@@ -81,28 +76,42 @@ class SimpleTransactionTest {
         @Test
         @DisplayName("Should throw NullPointerException when id is null")
         void shouldThrowWhenIdNull() {
-            assertThrows(NullPointerException.class, () ->
-                    new SimpleTransaction(null, description, amount, date, tags));
+            assertThrows(NullPointerException.class, () -> new SimpleTransaction(null, details),
+                    "ID cannot be null");
         }
 
         @Test
         @DisplayName("Should throw NullPointerException when description is null")
         void shouldThrowWhenDescriptionNull() {
-            assertDoesNotThrow(() -> new SimpleTransaction(id, null, amount, date, tags),
+            TransactionDetails detailsWithNullDescription = new TransactionDetails(
+                    null,
+                    LocalDate.now(),
+                    Set.of(mock(Tag.class)),
+                    new ArrayList<>()
+            );
+
+            assertDoesNotThrow(() -> new SimpleTransaction(id, detailsWithNullDescription),
                     "Description can be null and should default to an empty string");
         }
 
         @Test
-        @DisplayName("Should throw NullPointerException when date is null")
-        void shouldThrowWhenDateNull() {
-            assertThrows(NullPointerException.class, () ->
-                    new SimpleTransaction(id, description, amount, null, tags));
+        @DisplayName("Should not throw NullPointerException when date is null")
+        void shouldNotThrowWhenDateNull() {
+            TransactionDetails detailsWithNullDate = new TransactionDetails(
+                    "Test transaction",
+                    null,
+                    Set.of(mock(Tag.class)),
+                    new ArrayList<>()
+            );
+
+            assertDoesNotThrow(() -> new SimpleTransaction(id, detailsWithNullDate),
+                    "Date can be null and should default to LocalDate.now()");
         }
 
         @Test
-        @DisplayName("Should throw NullPointerException when tags is null")
-        void shouldThrowWhenTagsNull() {
-            assertDoesNotThrow(() -> new SimpleTransaction(id, description, amount, date, null),
+        @DisplayName("Should not throw Excpetion when tags are null")
+        void shouldNotThrowWhenTagsNull() {
+            assertDoesNotThrow(() -> new SimpleTransaction(id, details),
                     "Tags can be null and should default to an empty set");
         }
     }

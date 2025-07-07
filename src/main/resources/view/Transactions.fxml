@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.unicam.cs.mpgc.jbudget109164.view.TransactionsViewController"
+            prefHeight="400.0" prefWidth="600.0" stylesheets="@/css/style.css">
+    <center>
+        <TableView fx:id="transactionsTable">
+            <columns>
+                <TableColumn fx:id="dateCol" text="Date" prefWidth="100"/>
+                <TableColumn fx:id="descCol" text="Description" prefWidth="200"/>
+                <TableColumn fx:id="catCol" text="Category" prefWidth="150"/>
+                <TableColumn fx:id="amountCol" text="Balance" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="10"/>
+            </padding>
+            <Button fx:id="addButton" text="Add"/>
+            <Button fx:id="editButton" text="Edit"/>
+            <Button fx:id="deleteButton" text="Delete"/>
+        </HBox>
+    </bottom>
+</BorderPane>

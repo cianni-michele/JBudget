@@ -23,9 +23,9 @@ public abstract class TemplateMapper<E, D> implements Mapper<E, D> {
     protected abstract D mapToDTO(E entity);
 
     @Override
-    public E toEntity(D dto) {
+    public E toModel(D dto) {
         if (dto == null) return null;
-        return mapToEntity(dto);
+        return mapToModel(dto);
     }
 
     /**
@@ -34,5 +34,5 @@ public abstract class TemplateMapper<E, D> implements Mapper<E, D> {
      * @param dto the DTO to map
      * @return the mapped entity
      */
-    protected abstract E mapToEntity(D dto);
+    protected abstract E mapToModel(D dto);
 }

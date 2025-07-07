@@ -1,13 +1,10 @@
 package it.unicam.cs.mpgc.jbudget109164.model.transaction;
 
+import it.unicam.cs.mpgc.jbudget109164.model.Movement;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
 import java.time.LocalDate;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-
-import static java.util.Objects.*;
+import java.util.*;
 
 /**
  * An instance of this class represents a simple transaction, which includes a unique identifier,
@@ -23,36 +20,22 @@ public class SimpleTransaction implements Transaction {
     private final UUID id;
     private final TransactionDetails details;
 
-    public SimpleTransaction(String id,
-                             String description,
-                             double amount,
-                             String date,
-                             Set<Tag> tags) {
-        this(UUID.fromString(requireNonNull(id, "ID cannot be null")),
-                new TransactionDetails(
-                        requireNonNullElse(description, ""),
-                        amount,
-                        LocalDate.parse(requireNonNull(date, "Date cannot be null")),
-                        requireNonNullElse(tags, Set.of())
-                ));
-    }
 
     /**
      * Constructs a SimpleTransaction with the specified parameters.
      *
-     * @param id          the unique identifier of the transaction
-     * @param description a brief description of the transaction
-     * @param amount      the amount of money involved in the transaction
-     * @param date        the date when the transaction occurred
-     * @param tags        a set of tags associated with the transaction
-     * @throws NullPointerException if any of the parameters are null
+     * @param id the unique identifier of the transaction
+     * @param description the description of the transaction
+     * @param date the date of the transaction
+     * @param tags the set of tags associated with the transaction
+     * @param movements the list of movements associated with the transaction
      */
     public SimpleTransaction(UUID id,
                              String description,
-                             double amount,
                              LocalDate date,
-                             Set<Tag> tags) {
-        this(id, new TransactionDetails(description, amount, date, tags));
+                             Set<Tag> tags,
+                             List<Movement> movements) {
+        this(id, new TransactionDetails(description, date, tags, movements));
     }
 
     /**
@@ -63,13 +46,8 @@ public class SimpleTransaction implements Transaction {
      * @throws NullPointerException if any of the parameters are null
      */
     public SimpleTransaction(UUID id, TransactionDetails details) {
-        this.id = requireNonNull(id, "ID cannot be null");
-        this.details = requireNonNull(details, "Transaction details cannot be null");
-    }
-
-    @Override
-    public TransactionDetails getDetails() {
-        return details;
+        this.id = Objects.requireNonNull(id, "ID cannot be null");
+        this.details = Objects.requireNonNull(details, "Transaction details cannot be null");
     }
 
     @Override
@@ -78,13 +56,13 @@ public class SimpleTransaction implements Transaction {
     }
 
     @Override
-    public String getDescription() {
-        return details.description();
+    public TransactionDetails getDetails() {
+        return details;
     }
 
     @Override
-    public double getAmount() {
-        return details.amount();
+    public String getDescription() {
+        return details.description();
     }
 
     @Override
@@ -98,22 +76,61 @@ public class SimpleTransaction implements Transaction {
     }
 
     @Override
+    public boolean isTaggedBy(Tag tag) {
+        return details.hasTag(tag);
+    }
+
+    @Override
+    public List<Movement> getMovements() {
+        return details.movements();
+    }
+
+    @Override
+    public void addMovement(Movement movement) {
+        details.addMovement(movement);
+    }
+
+    @Override
+    public void removeMovement(int index) {
+        details.removeMovement(index);
+    }
+
+    @Override
+    public void setMovement(int index, Movement movement) {
+        details.setMovement(index, movement);
+    }
+
+    @Override
+    public int movementsCount() {
+        return details.movementCount();
+    }
+
+    @Override
+    public void addTag(Tag tag) {
+        details.addTag(tag);
+    }
+
+    @Override
+    public double getBalance() {
+        return details.totalAmount();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SimpleTransaction that = (SimpleTransaction) o;
-        return Objects.equals(id, that.id) && Objects.equals(details, that.details);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return hash(id, details);
+        return Objects.hashCode(id);
     }
 
     @Override
     public String toString() {
-        return "SimpleTransaction{" +
-               "id=" + id +
-               ", details=" + details +
-               '}';
+        return "SimpleTransaction[" +
+               "id=" + id + ", " +
+               "details=" + details + ']';
     }
 }

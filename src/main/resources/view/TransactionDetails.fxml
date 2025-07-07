@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.unicam.cs.mpgc.jbudget109164.view.TransactionDetailsViewController"
+      stylesheets="@/css/style.css">
+    <GridPane hgap="10" vgap="10">
+        <Label text="Date:"/>
+        <Label fx:id="dateLabel" GridPane.columnIndex="1"/>
+        <Label text="Description:" GridPane.rowIndex="1"/>
+        <Label fx:id="descLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <Label text="Category:" GridPane.rowIndex="2"/>
+        <Label fx:id="catLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <Label text="Total balance:" GridPane.rowIndex="3"/>
+        <Label fx:id="totalLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    </GridPane>
+
+    <Label text="Associated Movements:" styleClass="subtitle-label"/>
+    <TableView fx:id="movementsTable" prefHeight="200">
+        <columns>
+            <TableColumn fx:id="accountCol" text="Account"/>
+            <TableColumn fx:id="amountCol" text="Amount"/>
+            <TableColumn fx:id="noteCol" text="Note"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Add Movement" fx:id="addMovementButton"/>
+        <Button text="Modify Transaction" fx:id="editTransactionButton"/>
+        <Button text="Delete Transaction" fx:id="deleteTransactionButton"/>
+    </HBox>
+
+</VBox>
