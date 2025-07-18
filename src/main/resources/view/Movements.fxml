@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="500.0" prefWidth="700.0"
+            stylesheets="@/css/style.css">
+
+    <top>
+        <Label text="Movements" styleClass="title-label">
+            <BorderPane.margin>
+                <Insets top="15" left="20" bottom="10"/>
+            </BorderPane.margin>
+        </Label>
+    </top>
+
+    <center>
+        <TableView fx:id="movementsTable" styleClass="table-view">
+            <columns>
+                <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
+                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250"/>
+                <TableColumn fx:id="amountColumn" text="Amount" prefWidth="120"/>
+            </columns>
+            <BorderPane.margin>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </BorderPane.margin>
+        </TableView>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="20" bottom="15" left="20"/>
+            </padding>
+            <Button fx:id="addMovementButton" text="Add Movement" styleClass="action-button"/>
+            <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
+            <Button fx:id="refreshButton" text="Refresh" styleClass="action-button"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

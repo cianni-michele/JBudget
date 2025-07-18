@@ -1,16 +1,16 @@
 package it.unicam.cs.mpgc.jbudget109164.repository.tag;
 
 import it.unicam.cs.mpgc.jbudget109164.config.JsonRepositoryConfig;
-import it.unicam.cs.mpgc.jbudget109164.dto.TagDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 import it.unicam.cs.mpgc.jbudget109164.exception.repository.JsonRepositoryException;
 import it.unicam.cs.mpgc.jbudget109164.repository.AbstractJsonRepository;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.TagDTOBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.*;
 
+@SuppressWarnings("DuplicatedCode")
 public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> implements TagRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonTagRepository.class);
@@ -20,23 +20,15 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
     }
 
     @Override
-    protected UUID parseToId(String id) {
-        return UUID.fromString(id);
-    }
-
-    @Override
     public List<TagDTO> findAll() {
         LOGGER.debug("Finding all tags");
 
         List<TagDTO> tags = new ArrayList<>();
 
         for (Path filePath : filesPath.values()) {
-            TagDTO tagDTO = readFromFile(filePath, TagDTO.class);
-            if (tagDTO != null) {
-                tags.add(getTagWithChildren(tagDTO));
-            } else {
-                LOGGER.warn("Tag could not be read from file: {}", filePath);
-            }
+            TagDTO tag = readFromFile(filePath);
+            tags.add(tag);
+            LOGGER.debug("Tag found: {}", tag);
         }
 
         LOGGER.info("Found {} tags", tags.size());
@@ -44,55 +36,28 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
         return tags;
     }
 
-
     @Override
     public boolean existsById(UUID id) {
         return filesPath.containsKey(id);
     }
 
     @Override
-    public TagDTO findById(UUID tagId) {
+    public Optional<TagDTO> findById(UUID tagId) {
         LOGGER.debug("Finding tag by ID: {}", tagId);
 
         validateId(tagId);
 
         if (!filesPath.containsKey(tagId)) {
             LOGGER.info("Tag with ID {} not found", tagId);
-            return null;
+            return Optional.empty();
         }
 
         Path filePath = filesPath.get(tagId);
-        TagDTO tagFound = readFromFile(filePath, TagDTO.class);
 
-        if (tagFound == null) {
-            LOGGER.warn("Tag with ID {} could not be read from file", tagId);
-            return null;
-        }
-
-        TagDTO tag = getTagWithChildren(tagFound);
+        TagDTO tag = readFromFile(filePath);
 
         LOGGER.info("Found tag with ID {}", tagId);
-        return tag;
-    }
-
-    private TagDTO getTagWithChildren(TagDTO tag) {
-        return TagDTOBuilder.getInstance().copyOf(tag)
-                .withChildren(findChildren(tag))
-                .build();
-    }
-
-    private TagDTO[] findChildren(TagDTO tag) {
-        if (tag.children() == null) {
-            return null;
-        }
-
-        List<TagDTO> tags = new ArrayList<>();
-
-        for (TagDTO childTag : tag.children()) {
-            tags.add(findById(childTag.id()));
-        }
-
-        return tags.toArray(new TagDTO[0]);
+        return Optional.of(tag);
     }
 
     @Override
@@ -101,62 +66,23 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
 
         validateDTO(tag);
 
+        Path filePath;
         if (filesPath.containsKey(tag.id())) {
-            String message = "Unable to save tag with ID " + tag.id() + " because it already exists";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            filePath = filesPath.get(tag.id());
+        } else {
+            filePath = directory.toPath().resolve(tag.id() + JSON_EXTENSION);
+            filesPath.put(tag.id(), filePath);
         }
 
-        Path filePath = directory.toPath().resolve(tag.id() + JSON_EXTENSION);
-        writeToFile(filePath, TagDTO.class, tag);
-        filesPath.put(tag.id(), filePath);
+        writeToFile(tag, filePath);
 
-        saveChildren(tag);
-    }
-
-    private void saveChildren(TagDTO tag) {
-        if (tag.children() == null) {
-            return;
-        }
-
-        for (TagDTO tagDTO : tag.children()) {
-            save(tagDTO);
-        }
-    }
-
-    @Override
-    public void update(TagDTO dto) {
-        LOGGER.debug("Updating tag: {}", dto);
-
-        validateDTO(dto);
-
-        if (!filesPath.containsKey(dto.id())) {
-            String message = "Unable to update tag with ID " + dto.id() + " because it does not exist";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
-        }
-
-        Path filePath = filesPath.get(dto.id());
-        writeToFile(filePath, TagDTO.class, dto);
-
-        updateChildren(dto);
-
-        LOGGER.info("Updated tag with ID {}", dto.id());
-
-    }
-
-    private void updateChildren(TagDTO tag) {
-        if (tag.children() == null) {
-            return;
-        }
-
-        for (TagDTO child : tag.children()) {
-            if (filesPath.containsKey(child.id())) {
-                update(child);
-            } else {
-                save(child);
+        if (tag.children() != null) {
+            for (TagDTO tagDTO : tag.children()) {
+                save(tagDTO);
             }
         }
+
+        LOGGER.info("Saved tag with ID {}", tag.id());
     }
 
     @Override
@@ -166,17 +92,13 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
         validateId(tagId);
 
         if (!filesPath.containsKey(tagId)) {
-            String message = "Unable to delete tag with ID " + tagId + " because it does not exist";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Unable to delete tag with ID {} because it does not exist", tagId);
         }
 
         Path filePath = filesPath.get(tagId);
 
         if (filePath != null && !filePath.toFile().delete()) {
-            String message = "Failed to delete tag with ID " + tagId;
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Failed to delete tag with ID {}", tagId);
         }
 
         filesPath.remove(tagId);
@@ -185,26 +107,73 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
     }
 
     @Override
-    public int count() {
-        return filesPath.size();
+    protected UUID parseToId(String id) {
+        return UUID.fromString(id);
     }
 
     @Override
     protected void validateDTO(TagDTO tag) {
         if (tag == null) {
-            String message = "TagDTO cannot be null";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Tag cannot be null");
         }
+
         validateId(tag.id());
+        validateTagsReference(tag.children());
+    }
+
+    private void validateTagsReference(TagDTO[] children) {
+        if (children == null) {
+            throw exceptionAndLogError("Children tags cannot be null");
+        }
+
+        for (TagDTO tag : children) {
+            if (tag == null) {
+                throw exceptionAndLogError("Tag in children cannot be null");
+            }
+            UUID tagId = tag.id();
+            validateId(tagId);
+            if (!existsById(tagId)) {
+                throw exceptionAndLogError("Tag with ID {} does not exist", tagId);
+            }
+        }
     }
 
     @Override
     protected void validateId(UUID tagId) {
         if (tagId == null) {
-            String message = "Tag ID cannot be null";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Tag ID cannot be null");
         }
+    }
+
+    private TagDTO readFromFile(Path filePath) {
+        return getTagWithChildren(readFromFile(filePath, TagDTO.class));
+    }
+
+    private TagDTO getTagWithChildren(TagDTO tag) {
+        return TagDTO.builder().copyFrom(tag)
+                .withChildren(resolveTagsReference(tag))
+                .build();
+    }
+
+    private TagDTO[] resolveTagsReference(TagDTO tag) {
+        if (tag.children() == null) {
+            return null;
+        }
+
+        List<TagDTO> tags = new ArrayList<>();
+
+        for (TagDTO childTag : tag.children()) {
+            Optional<TagDTO> tagFound = findById(childTag.id());
+            if (tagFound.isEmpty()) {
+                throw exceptionAndLogError("Tag with ID {} not found", childTag.id());
+            }
+            tags.add(tagFound.get());
+        }
+
+        return tags.toArray(new TagDTO[0]);
+    }
+
+    private void writeToFile(TagDTO tag, Path filePath) {
+        writeToFile(filePath, TagDTO.class, tag);
     }
 }

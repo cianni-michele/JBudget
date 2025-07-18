@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,15 +36,11 @@ public abstract class AbstractJsonRepository<I, D> {
         LOGGER.debug("Initializing {} with directory: {}", this.getClass().getSimpleName(), directory);
 
         if (!directory.exists() && !directory.mkdirs()) {
-            String message = "Failed to create directory: " + directory;
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Failed to create directory: {}", directory);
         }
 
         if (!directory.isDirectory()) {
-            String message = "Directory is not a directory: " + directory;
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
+            throw exceptionAndLogError("Is not a directory: {}", directory);
         }
     }
 
@@ -75,11 +72,13 @@ public abstract class AbstractJsonRepository<I, D> {
 
     protected D readFromFile(Path filePath, Class<D> type) {
         try (Reader reader = new FileReader(filePath.toFile())) {
-            return gson.fromJson(reader, type);
+            D dto = gson.fromJson(reader, type);
+            if (dto == null) {
+                throw exceptionAndLogError("Failed to parse JSON from file: {}", filePath);
+            }
+            return dto;
         } catch (IOException e) {
-            String message = "Error reading from file: " + filePath;
-            LOGGER.error(message, e);
-            throw new JsonRepositoryException(message, e.getCause());
+            throw exceptionAndLogError(e.getCause(), "Error reading from file: {}", filePath);
         }
     }
 
@@ -87,10 +86,18 @@ public abstract class AbstractJsonRepository<I, D> {
         try (Writer writer = new FileWriter(filePath.toFile())) {
             gson.toJson(data, type, writer);
         } catch (IOException e) {
-            String message = "Error writing to file: " + filePath;
-            LOGGER.error(message, e);
-            throw new JsonRepositoryException(message, e.getCause());
+            throw exceptionAndLogError(e.getCause(), "Error writing to file: {} ", filePath);
         }
+    }
+
+    protected JsonRepositoryException exceptionAndLogError(String message, Object... args) {
+        LOGGER.error(message, args);
+        return new JsonRepositoryException(MessageFormat.format(message, args));
+    }
+
+    private JsonRepositoryException exceptionAndLogError(Throwable cause, String message, Object... args) {
+        LOGGER.error(message, args);
+        return new JsonRepositoryException(MessageFormat.format(message, args), cause);
     }
 
     /**

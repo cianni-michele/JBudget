@@ -2,12 +2,11 @@ package it.unicam.cs.mpgc.jbudget109164.config.serialization.dto;
 
 import com.google.gson.*;
 import it.unicam.cs.mpgc.jbudget109164.config.serialization.CustomTypeAdapter;
-import it.unicam.cs.mpgc.jbudget109164.dto.AccountDTO;
-import it.unicam.cs.mpgc.jbudget109164.dto.MovementDTO;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.AccountDTOBuilder;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.MovementDTOBuilder;
+import it.unicam.cs.mpgc.jbudget109164.dto.movement.MovementDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -18,17 +17,21 @@ import java.util.UUID;
  * Example JSON structure:
  * <pre>
  * {
+ *  "id": "123e4567-e89b-12d3-a456-426614174000",
  *  "amount": 100.0,
  *  "description": "Payment for services",
- *  "accountId": 1
+ *  "date": "2023-10-01T12:00:00Z",
+ *  "tags": [ "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174001" ]
  * }
  * </pre>
  */
 public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
 
+    private static final String ID_PROPERTY = "id";
     private static final String AMOUNT_PROPERTY = "amount";
     private static final String DESCRIPTION_PROPERTY = "description";
-    private static final String ACCOUNT_ID_PROPERTY = "accountId";
+    private static final String DATE_PROPERTY = "date";
+    private static final String TAGS_PROPERTY = "tags";
 
     @Override
     public MovementDTO deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -42,31 +45,50 @@ public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
 
         JsonObject movement = json.getAsJsonObject();
 
+        UUID id = movement.has(ID_PROPERTY) ?
+                UUID.fromString(movement.get(ID_PROPERTY).getAsString()) : null;
+
         Double amount = movement.has(AMOUNT_PROPERTY) ?
-                movement.getAsJsonObject().get(AMOUNT_PROPERTY).getAsDouble() : null;
+                movement.get(AMOUNT_PROPERTY).getAsDouble() : null;
 
         String description = movement.has(DESCRIPTION_PROPERTY) ?
-                movement.getAsJsonObject().get(DESCRIPTION_PROPERTY).getAsString() : null;
+                movement.get(DESCRIPTION_PROPERTY).getAsString() : null;
 
-        AccountDTO account = movement.has(ACCOUNT_ID_PROPERTY) ?
-                deserializeAccount(movement.get(ACCOUNT_ID_PROPERTY)) : null;
+        LocalDate date = movement.has(DATE_PROPERTY) ?
+                context.deserialize(movement.get(DATE_PROPERTY), LocalDate.class) : null;
 
-        return MovementDTOBuilder.getInstance()
+        TagDTO[] tags = movement.has(TAGS_PROPERTY) ?
+                deserializeTags(movement.get(TAGS_PROPERTY)) : null;
+
+        return MovementDTO.builder()
+                .withId(id)
                 .withAmount(amount)
                 .withDescription(description)
-                .withAccount(account)
+                .withDate(date)
+                .withTags(tags)
                 .build();
     }
 
-    private AccountDTO deserializeAccount(JsonElement accountId) {
-        if (accountId.isJsonNull()) {
+    private TagDTO[] deserializeTags(JsonElement json) {
+        if (json == null || json.isJsonNull()) {
             return null;
         }
-
-        return AccountDTOBuilder.getInstance()
-                .withId(UUID.fromString(accountId.getAsString()))
-                .build();
+        if (!json.isJsonArray()) {
+            throw new JsonParseException("Expected a JSON array for tags");
+        }
+        JsonArray tagsArray = json.getAsJsonArray();
+        TagDTO[] tags = new TagDTO[tagsArray.size()];
+        for (int i = 0; i < tagsArray.size(); i++) {
+            JsonElement tagElement = tagsArray.get(i);
+            if (!tagElement.isJsonPrimitive() || !tagElement.getAsJsonPrimitive().isString()) {
+                throw new JsonParseException("Expected a string for tag ID");
+            }
+            String tagId = tagElement.getAsString();
+            tags[i] = TagDTO.builder().withId(UUID.fromString(tagId)).build();
+        }
+        return tags;
     }
+
 
     @Override
     public JsonElement serialize(MovementDTO src, Type typeOfSrc, JsonSerializationContext context) {
@@ -76,6 +98,10 @@ public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
 
         JsonObject json = new JsonObject();
 
+        if (src.id() != null) {
+            json.addProperty(ID_PROPERTY, src.id().toString());
+        }
+
         if (src.amount() != null) {
             json.addProperty(AMOUNT_PROPERTY, src.amount());
         }
@@ -84,14 +110,30 @@ public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
             json.addProperty(DESCRIPTION_PROPERTY, src.description());
         }
 
-        if (src.account() != null) {
-            json.add(ACCOUNT_ID_PROPERTY, serializeAccount(src.account()));
+        if (src.date() != null) {
+            json.add(DATE_PROPERTY, context.serialize(src.date()));
+        }
+
+        if (src.tags() != null) {
+            json.add(TAGS_PROPERTY, serializeTags(src.tags()));
         }
 
         return json;
     }
 
-    private JsonElement serializeAccount(AccountDTO account) {
-        return account.id() != null ? new JsonPrimitive(account.id().toString()) : JsonNull.INSTANCE;
+    private static JsonElement serializeTags(TagDTO[] src) {
+        if (src == null || src.length == 0) {
+            return JsonNull.INSTANCE;
+        }
+        JsonArray tagsArray = new JsonArray();
+        for (TagDTO tag : src) {
+            if (tag != null) {
+                UUID tagId = tag.id();
+                if (tagId != null) {
+                    tagsArray.add(tagId.toString());
+                }
+            }
+        }
+        return tagsArray;
     }
 }

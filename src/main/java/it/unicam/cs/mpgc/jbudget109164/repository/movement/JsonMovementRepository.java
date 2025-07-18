@@ -1,30 +1,116 @@
 package it.unicam.cs.mpgc.jbudget109164.repository.movement;
 
 import it.unicam.cs.mpgc.jbudget109164.config.JsonRepositoryConfig;
-import it.unicam.cs.mpgc.jbudget109164.dto.NewMovementDTO;
-import it.unicam.cs.mpgc.jbudget109164.dto.TagDTO;
-import it.unicam.cs.mpgc.jbudget109164.exception.repository.JsonRepositoryException;
+import it.unicam.cs.mpgc.jbudget109164.dto.movement.MovementDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 import it.unicam.cs.mpgc.jbudget109164.repository.AbstractJsonRepository;
 import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagRepository;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.NewMovementDTOBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-public class JsonMovementRepository extends AbstractJsonRepository<UUID, NewMovementDTO> implements MovementRepository {
+@SuppressWarnings("LoggingSimilarMessage")
+public class JsonMovementRepository extends AbstractJsonRepository<UUID, MovementDTO> implements MovementRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonMovementRepository.class);
 
     private final TagRepository tagRepository;
 
-    protected JsonMovementRepository(JsonRepositoryConfig config, TagRepository tagRepository) {
+    public JsonMovementRepository(JsonRepositoryConfig config, TagRepository tagRepository) {
         super(config);
         this.tagRepository = tagRepository;
+    }
+
+    @Override
+    public List<MovementDTO> findAll() {
+        LOGGER.debug("Finding all movements");
+
+        List<MovementDTO> movements = new ArrayList<>();
+
+        for (Path path : filesPath.values()) {
+            MovementDTO movement = readFromFile(path);
+            movements.add(movement);
+            LOGGER.debug("Movement found: {}", movement);
+        }
+
+        LOGGER.info("Total movements found: {}", movements.size());
+
+        return movements;
+    }
+
+    @Override
+    public boolean existsById(UUID id) {
+        LOGGER.debug("Checking if movement exists by ID: {}", id);
+
+        boolean exists = filesPath.containsKey(id);
+
+        if (exists) {
+            LOGGER.info("Movement with ID {} exists", id);
+        } else {
+            LOGGER.info("Movement with ID {} does not exist", id);
+        }
+
+        return exists;
+    }
+
+    @Override
+    public Optional<MovementDTO> findById(UUID movementId) {
+        LOGGER.debug("Finding movement by ID: {}", movementId);
+
+        validateId(movementId);
+
+        if (!filesPath.containsKey(movementId)) {
+            LOGGER.info("Movement with ID {} not found", movementId);
+            return Optional.empty();
+        }
+
+        Path movementPath = filesPath.get(movementId);
+
+        MovementDTO movement = readFromFile(movementPath);
+
+        LOGGER.info("Found movement with ID {}", movementId);
+        return Optional.of(movement);
+    }
+
+    @Override
+    public void save(MovementDTO movement) {
+        LOGGER.debug("Saving movement: {}", movement);
+
+        validateDTO(movement);
+
+        Path movementPath;
+        if (filesPath.containsKey(movement.id())) {
+            movementPath = filesPath.get(movement.id());
+            LOGGER.debug("Updating existing movement with ID {}", movement.id());
+        } else {
+            movementPath = directory.toPath().resolve(movement.id() + JSON_EXTENSION);
+            filesPath.put(movement.id(), movementPath);
+            LOGGER.debug("Creating new movement with ID {}", movement.id());
+        }
+
+        writeToFile(movementPath, movement);
+        LOGGER.info("Movement with ID {} saved successfully", movement.id());
+    }
+
+    @Override
+    public void deleteById(UUID movementId) {
+        LOGGER.debug("Deleting movement by ID: {}", movementId);
+
+        validateId(movementId);
+
+        if (!filesPath.containsKey(movementId)) {
+            throw exceptionAndLogError("Unable to delete movement with ID {} because it does not exist", movementId);
+        }
+
+        Path movementPath = filesPath.remove(movementId);
+
+        if (movementPath != null && !movementPath.toFile().delete()) {
+            throw exceptionAndLogError("Failed to delete movement with ID {}", movementId);
+        }
+
+        LOGGER.info("Movement with ID {} deleted successfully", movementId);
     }
 
     @Override
@@ -33,52 +119,50 @@ public class JsonMovementRepository extends AbstractJsonRepository<UUID, NewMove
     }
 
     @Override
-    public List<NewMovementDTO> findAll() {
-        LOGGER.debug("Finding all movements");
+    protected void validateDTO(MovementDTO movement) {
+        if (movement == null) {
+            throw exceptionAndLogError("Movement cannot be null");
+        }
+        validateId(movement.id());
+        validateTagsReference(movement.tags());
+    }
 
-        List<NewMovementDTO> movements = new ArrayList<>();
-
-        for (Path path : filesPath.values()) {
-            NewMovementDTO movementFound = readFromFile(path, NewMovementDTO.class);
-            if (Objects.nonNull(movementFound)) {
-                TagDTO[] movementTags = resolveTagReferences(movementFound.tags());
-                NewMovementDTO movement = NewMovementDTOBuilder.getInstance().copyOf(movementFound)
-                        .setTags(movementTags)
-                        .build();
-                movements.add(movement);
-                LOGGER.debug("Movement found: {}", movementFound);
-            } else {
-                LOGGER.warn("Movement file {} could not be read", path);
-            }
+    private void validateTagsReference(TagDTO[] movementTags) {
+        if (movementTags == null) {
+            throw exceptionAndLogError("Movement tags cannot be null");
         }
 
-        return movements;
+        for (TagDTO tag : movementTags) {
+            if (tag == null) {
+                throw exceptionAndLogError("Tag in movement cannot be null");
+            }
+
+            UUID tagId = tag.id();
+
+            if (tagId == null) {
+                throw exceptionAndLogError("Tag ID cannot be null");
+            }
+
+            if (!tagRepository.existsById(tagId)) {
+                throw exceptionAndLogError("Tag with ID {} does not exist", tagId);
+            }
+        }
     }
 
     @Override
-    public NewMovementDTO findById(UUID movementId) {
-        LOGGER.debug("Finding movement by ID: {}", movementId);
-
-        validateId(movementId);
-
-        if (!filesPath.containsKey(movementId)) {
-            LOGGER.info("Movement with ID {} not found", movementId);
-            return null;
+    protected void validateId(UUID movementId) {
+        if (movementId == null) {
+            throw exceptionAndLogError("Movement ID cannot be null");
         }
+    }
 
-        Path movementPath = filesPath.get(movementId);
+    private MovementDTO readFromFile(Path movementPath) {
+        return getMovementWithTags(readFromFile(movementPath, MovementDTO.class));
+    }
 
-        NewMovementDTO movementFound = readFromFile(movementPath, NewMovementDTO.class);
-
-        if (Objects.isNull(movementFound)) {
-            LOGGER.warn("Movement with ID {} could not be read from file", movementId);
-            return null;
-        }
-
-        TagDTO[] movementTags = resolveTagReferences(movementFound.tags());
-
-        return NewMovementDTOBuilder.getInstance().copyOf(movementFound)
-                .setTags(movementTags)
+    private MovementDTO getMovementWithTags(MovementDTO movementFound) {
+        return MovementDTO.builder().copyFrom(movementFound)
+                .withTags(resolveTagReferences(movementFound.tags()))
                 .build();
     }
 
@@ -90,72 +174,17 @@ public class JsonMovementRepository extends AbstractJsonRepository<UUID, NewMove
         List<TagDTO> result = new ArrayList<>();
 
         for (TagDTO tag : movementTags) {
-            TagDTO resolvedTag = tagRepository.findById(tag.id());
-            if (resolvedTag != null) {
-                result.add(resolvedTag);
-            } else {
-                LOGGER.warn("Tag with ID {} not found", tag.id());
+            Optional<TagDTO> tagFound = tagRepository.findById(tag.id());
+            if (tagFound.isEmpty()) {
+                throw exceptionAndLogError("Tag with ID {} does not exist", tag.id());
             }
+            result.add(tagFound.get());
         }
 
         return result.toArray(new TagDTO[0]);
     }
 
-    @Override
-    public void save(NewMovementDTO movement) {
-
-    }
-
-    @Override
-    public void update(NewMovementDTO movement) {
-
-    }
-
-    @Override
-    public void deleteById(UUID movementId) {
-
-    }
-
-    @Override
-    public int count() {
-        return filesPath.size();
-    }
-
-    @Override
-    protected void validateDTO(NewMovementDTO movement) {
-        if (Objects.isNull(movement)) {
-            String message = "Movement DTO cannot be null";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
-        }
-        validateId(movement.id());
-
-        validateTagsReference(movement.tags());
-    }
-
-    private void validateTagsReference(TagDTO[] movementTags) {
-        if (Objects.nonNull(movementTags)) {
-            for (TagDTO tag : movementTags) {
-                if (Objects.nonNull(tag)) {
-                    UUID tagId = tag.id();
-                    if (!tagRepository.existsById(tagId)) {
-                        String message = "Tag with ID " + tagId + " does not exist";
-                        LOGGER.error(message);
-                        throw new JsonRepositoryException(message);
-                    }
-                } else {
-                    LOGGER.warn("Tag in movement cannot be null");
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void validateId(UUID movementId) {
-        if (Objects.isNull(movementId)) {
-            String message = "Movement ID cannot be null";
-            LOGGER.error(message);
-            throw new JsonRepositoryException(message);
-        }
+    private void writeToFile(Path movementPath, MovementDTO movement) {
+        writeToFile(movementPath, MovementDTO.class, movement);
     }
 }

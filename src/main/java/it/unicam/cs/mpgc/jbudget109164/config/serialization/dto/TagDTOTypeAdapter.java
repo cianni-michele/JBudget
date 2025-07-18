@@ -2,8 +2,7 @@ package it.unicam.cs.mpgc.jbudget109164.config.serialization.dto;
 
 import com.google.gson.*;
 import it.unicam.cs.mpgc.jbudget109164.config.serialization.CustomTypeAdapter;
-import it.unicam.cs.mpgc.jbudget109164.dto.TagDTO;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.TagDTOBuilder;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -49,7 +48,7 @@ public class TagDTOTypeAdapter implements CustomTypeAdapter<TagDTO> {
         TagDTO[] children = tag.has(CHILDREN_IDS_PROPERTY) ?
                 deserializeChildren(tag.getAsJsonArray(CHILDREN_IDS_PROPERTY)) : null;
 
-        return TagDTOBuilder.getInstance()
+        return TagDTO.builder()
                 .withId(id)
                 .withName(name)
                 .withChildren(children)
@@ -64,7 +63,7 @@ public class TagDTOTypeAdapter implements CustomTypeAdapter<TagDTO> {
         TagDTO[] children = new TagDTO[childrenArray.size()];
 
         for (int i = 0; i < childrenArray.size(); i++) {
-            children[i] = TagDTOBuilder.getInstance()
+            children[i] = TagDTO.builder()
                     .withId(UUID.fromString(childrenArray.get(i).getAsString()))
                     .build();
         }

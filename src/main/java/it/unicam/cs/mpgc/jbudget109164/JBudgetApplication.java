@@ -1,24 +1,26 @@
 package it.unicam.cs.mpgc.jbudget109164;
 
-import it.unicam.cs.mpgc.jbudget109164.controller.AccountController;
-import it.unicam.cs.mpgc.jbudget109164.controller.TagController;
-import it.unicam.cs.mpgc.jbudget109164.controller.TransactionController;
-import it.unicam.cs.mpgc.jbudget109164.utils.io.FXMLResourceLoader;
+import it.unicam.cs.mpgc.jbudget109164.controller.movement.MovementController;
+import it.unicam.cs.mpgc.jbudget109164.controller.tag.TagController;
+import it.unicam.cs.mpgc.jbudget109164.util.io.FXMLResourceLoader;
+import it.unicam.cs.mpgc.jbudget109164.view.controller.MovementsViewController;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class JBudgetApplication extends Application {
 
     private TagController tagController;
 
-    private AccountController accountController;
-
-    private TransactionController transactionController;
+    private MovementController movementController;
 
 
     @Override
@@ -26,31 +28,16 @@ public class JBudgetApplication extends Application {
         super.init();
         ControllerFactory controllerFactory = new ControllerFactory();
         tagController = controllerFactory.getTagController();
-        accountController = controllerFactory.getAccountController();
-        transactionController = controllerFactory.getTransactionController();
+        movementController = controllerFactory.getMovementController();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        /*TabPane tabPane = new TabPane();
-
-        Tab accountsTab = new Tab("Accounts");
-        AccountView accountsView = new AccountView(accountController);
-        accountsTab.setContent(accountsView);
-        accountsTab.setClosable(false);
-
-        Tab transactionsTab = new Tab("Transactions");
-        TransactionView transactionView = new TransactionView(transactionController, accountController);
-        transactionsTab.setContent(transactionView);
-        transactionsTab.setClosable(false);
-
-        tabPane.getTabs().addAll(accountsTab, transactionsTab);*/
-        //Scene scene = new Scene(tabPane, 900, 600);
+        // Main layout
         BorderPane root = new BorderPane();
 
         // Sidebar (Menu)
         VBox sidebar = createSideBar(root);
-
 
         // Layout setup
         root.setLeft(sidebar);
@@ -72,9 +59,17 @@ public class JBudgetApplication extends Application {
             root.setCenter(FXMLResourceLoader.loadView("Dashboard"));
         });
 
-        Button transactionsBtn = createSidebarButton("Transactions");
+        Button transactionsBtn = createSidebarButton("Movements");
         transactionsBtn.setOnAction(e -> {
-            root.setCenter(FXMLResourceLoader.loadView("Transactions"));
+            FXMLLoader movementsLoader = FXMLResourceLoader.getLoader("Movements");
+            movementsLoader.setController(new MovementsViewController(movementController, tagController));
+            Parent parent;
+            try {
+                parent = movementsLoader.load();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            root.setCenter(parent);
         });
 
         Button dueDatesBtn = createSidebarButton("Due Dates");

@@ -6,14 +6,11 @@ import it.unicam.cs.mpgc.jbudget109164.config.serialization.LocalDateTypeAdapter
 import it.unicam.cs.mpgc.jbudget109164.config.serialization.UUIDTypeAdapter;
 import it.unicam.cs.mpgc.jbudget109164.config.serialization.dto.MovementDTOTypeAdapter;
 import it.unicam.cs.mpgc.jbudget109164.config.serialization.dto.TagDTOTypeAdapter;
-import it.unicam.cs.mpgc.jbudget109164.config.serialization.dto.TransactionDTOTypeAdapter;
-import it.unicam.cs.mpgc.jbudget109164.dto.TagDTO;
-import it.unicam.cs.mpgc.jbudget109164.dto.MovementDTO;
-import it.unicam.cs.mpgc.jbudget109164.dto.TransactionDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.movement.MovementDTO;
 import it.unicam.cs.mpgc.jbudget109164.exception.config.JsonRepositoryConfigException;
-import it.unicam.cs.mpgc.jbudget109164.repository.account.JsonAccountRepository;
+import it.unicam.cs.mpgc.jbudget109164.repository.movement.JsonMovementRepository;
 import it.unicam.cs.mpgc.jbudget109164.repository.tag.JsonTagRepository;
-import it.unicam.cs.mpgc.jbudget109164.repository.transaction.JsonTransactionRepository;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -22,14 +19,19 @@ import java.util.UUID;
 
 public class DefaultJsonRepositoryConfig implements JsonRepositoryConfig {
 
+    private static final String DIRECTORY = "json-repositories";
+
     private final Map<String, String> repositoryDirectories;
 
     public DefaultJsonRepositoryConfig() {
         repositoryDirectories = Map.of(
-                JsonTransactionRepository.class.getName(), "src/main/resources/transactions",
-                JsonAccountRepository.class.getName(), "src/main/resources/accounts",
-                JsonTagRepository.class.getName(), "src/main/resources/tags"
+                JsonMovementRepository.class.getName(), resolveDirectory("movements"),
+                JsonTagRepository.class.getName(), resolveDirectory("tags")
         );
+    }
+
+    private static String resolveDirectory(String name) {
+        return DIRECTORY + File.separator + name;
     }
 
     @Override
@@ -39,7 +41,6 @@ public class DefaultJsonRepositoryConfig implements JsonRepositoryConfig {
                 .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
                 .registerTypeAdapter(TagDTO.class, new TagDTOTypeAdapter())
                 .registerTypeAdapter(MovementDTO.class, new MovementDTOTypeAdapter())
-                .registerTypeAdapter(TransactionDTO.class, new TransactionDTOTypeAdapter())
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();

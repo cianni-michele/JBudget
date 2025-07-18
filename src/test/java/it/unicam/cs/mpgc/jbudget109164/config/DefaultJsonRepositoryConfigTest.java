@@ -3,13 +3,13 @@ package it.unicam.cs.mpgc.jbudget109164.config;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import it.unicam.cs.mpgc.jbudget109164.repository.movement.JsonMovementRepository;
+import it.unicam.cs.mpgc.jbudget109164.repository.tag.JsonTagRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import it.unicam.cs.mpgc.jbudget109164.exception.config.JsonRepositoryConfigException;
-import it.unicam.cs.mpgc.jbudget109164.repository.account.JsonAccountRepository;
-import it.unicam.cs.mpgc.jbudget109164.repository.transaction.JsonTransactionRepository;
 
 class DefaultJsonRepositoryConfigTest {
 
@@ -39,15 +39,15 @@ class DefaultJsonRepositoryConfigTest {
     }
 
     @Test
-    @DisplayName("should return a non-null File for JsonTransactionRepository")
-    void shouldReturnDirectoryForJsonTransactionRepository() {
-        assertNotNull(underTest.getDirectory(JsonTransactionRepository.class));
+    @DisplayName("should return a non-null File for JsonTagRepository")
+    void shouldReturnDirectoryForJsonTagRepository() {
+        assertNotNull(underTest.getDirectory(JsonTagRepository.class));
     }
 
     @Test
-    @DisplayName("should return a non-null File for JsonAccountRepository")
-    void shouldReturnDirectoryForJsonAccountRepository() {
-        assertNotNull(underTest.getDirectory(JsonAccountRepository.class));
+    @DisplayName("should return a non-null File for JsonMovementRepository")
+    void shouldReturnDirectoryForJsonMovementRepository() {
+        assertNotNull(underTest.getDirectory(JsonMovementRepository.class));
     }
 
 }

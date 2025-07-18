@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      stylesheets="@/css/style.css"
+      spacing="15" style="-fx-padding: 20;">
+
+    <Label text="Movement Details" styleClass="title-label"/>
+
+    <GridPane hgap="15" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints minWidth="100" prefWidth="120"/>
+            <ColumnConstraints minWidth="200" prefWidth="300"/>
+        </columnConstraints>
+
+        <Label text="Date:" styleClass="label-bold"/>
+        <Label fx:id="dateLabel" GridPane.columnIndex="1" styleClass="data-label"/>
+
+        <Label text="Description:" GridPane.rowIndex="1" styleClass="label-bold"/>
+        <Label fx:id="descLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="data-label"/>
+
+        <Label text="Amount:" GridPane.rowIndex="2" styleClass="label-bold"/>
+        <Label fx:id="amountLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="data-label"/>
+    </GridPane>
+
+    <Separator/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add Tag" fx:id="addTagButton" styleClass="action-button"/>
+        <Button text="Edit Movement" fx:id="editButton" styleClass="action-button"/>
+        <Button text="Delete Movement" fx:id="deleteButton" styleClass="danger-button"/>
+    </HBox>
+
+</VBox>

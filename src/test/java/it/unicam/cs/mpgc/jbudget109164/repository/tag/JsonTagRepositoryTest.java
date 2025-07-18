@@ -1,17 +1,17 @@
 package it.unicam.cs.mpgc.jbudget109164.repository.tag;
 
-import it.unicam.cs.mpgc.jbudget109164.TestDTOs;
 import it.unicam.cs.mpgc.jbudget109164.config.DefaultJsonRepositoryConfig;
 import it.unicam.cs.mpgc.jbudget109164.config.JsonRepositoryConfig;
-import it.unicam.cs.mpgc.jbudget109164.dto.TagDTO;
+import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 import it.unicam.cs.mpgc.jbudget109164.exception.repository.JsonRepositoryException;
-import it.unicam.cs.mpgc.jbudget109164.utils.builder.TagDTOBuilder;
+import it.unicam.cs.mpgc.jbudget109164.util.builder.TagDTOBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
@@ -82,9 +82,9 @@ class JsonTagRepositoryTest {
     @Test
     @DisplayName("Should not find a tag by non-existing ID")
     void shouldNotFindTagByNonExistingId() {
-        Long nonExistringId = 999L;
+        UUID nonExistingId = UUID.randomUUID();
 
-        TagDTO tagFound = underTest.findById(nonExistringId);
+        TagDTO tagFound = underTest.findById(nonExistingId);
 
         assertNull(tagFound, "Tag found should be null for non-existing ID");
     }
@@ -104,7 +104,7 @@ class JsonTagRepositoryTest {
     @Test
     @DisplayName("Should not delete a non-existing tag")
     void shouldNotDeleteNonExistingTag() {
-        Long nonExistingId = 999L;
+        UUID nonExistingId = UUID.randomUUID();
 
         assertThrows(JsonRepositoryException.class, () -> underTest.deleteById(nonExistingId));
     }

@@ -8,7 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.unicam.cs.mpgc.jbudget109164.view.DashboardViewController"
+            fx:controller="it.unicam.cs.mpgc.jbudget109164.view.controller.DashboardViewController"
             prefHeight="400.0" prefWidth="600.0" stylesheets="@/css/style.css">
     <Label text="Dashboard" layoutX="30" layoutY="30" styleClass="title-label"/>
 </AnchorPane>
