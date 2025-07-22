@@ -4,6 +4,13 @@ import it.unicam.cs.mpgc.jbudget109164.util.time.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.statistic.Statistics;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
+/**
+ * Service interface for retrieving financial statistics.
+ * This service provides methods to obtain statistics for a specific period
+ * and for a specific tag within that period.
+ *
+ * @author Michele Cianni
+ */
 public interface StatisticService {
 
     /**

@@ -6,6 +6,14 @@ import java.util.UUID;
 
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
+/**
+ * Represents a monthly budget with details about the expected amount,
+ * the tag associated with it, and the period it covers.
+ * This class implements the {@link Budget} interface, providing
+ * methods to access the budget's ID, tag, period, and expected amount.
+ *
+ * @author Michele Cianni
+ */
 public class MonthlyBudget implements Budget<YearMonth> {
     private final UUID id;
     private final Tag tag;
@@ -53,8 +61,8 @@ public class MonthlyBudget implements Budget<YearMonth> {
         if (o == null || getClass() != o.getClass()) return false;
         MonthlyBudget that = (MonthlyBudget) o;
         return Double.compare(expectedAmount, that.expectedAmount) == 0 &&
-                Objects.equals(period, that.period) &&
-                Objects.equals(tag, that.tag);
+               Objects.equals(period, that.period) &&
+               Objects.equals(tag, that.tag);
     }
 
     @Override
@@ -65,9 +73,9 @@ public class MonthlyBudget implements Budget<YearMonth> {
     @Override
     public String toString() {
         return "MonthlyBudget{" +
-                "period=" + period +
-                ", tag=" + tag +
-                ", expectedAmount=" + expectedAmount +
-                '}';
+               "period=" + period +
+               ", tag=" + tag +
+               ", expectedAmount=" + expectedAmount +
+               '}';
     }
 }

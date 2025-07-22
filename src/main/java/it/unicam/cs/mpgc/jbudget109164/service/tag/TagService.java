@@ -7,6 +7,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Service interface for managing tags in the application.
+ * This interface provides methods to create, update, delete, and retrieve tags,
+ * as well as manage their hierarchical relationships (parent-child).
+ *
+ * @author Michele Cianni
+ */
 public interface TagService {
 
     /**

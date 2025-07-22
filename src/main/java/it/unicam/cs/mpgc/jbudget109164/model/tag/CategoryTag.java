@@ -5,13 +5,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Represents a node in a hierarchical tag structure.
- * This class extends the Tag class and is used to create nodes that can have parent-child relationships.
- * It is designed to be used in a Directed Acyclic Graph (DAG) structure, allowing for complex tag hierarchies.
+ * Represents a category tag in a hierarchical tagging system.
+ * This class extends the {@link Tag} class and provides
+ * methods to manage child tags, check parent-child relationships,
+ * and ensure the integrity of the tag hierarchy.
  * <p>
- * This class is a concrete implementation of {@link Tag}.
+ * This class is designed to be used in a tagging system
+ * where tags can have a parent-child relationship,
+ * allowing for the creation of categories and subcategories.
  *
- * @see Tag
  * @author Michele Cianni
  */
 public class CategoryTag extends Tag {
@@ -34,7 +36,7 @@ public class CategoryTag extends Tag {
             throw new NullPointerException("Child tag cannot be null");
         }
 
-        if (createsCycles(tag)){
+        if (createsCycles(tag)) {
             throw new IllegalArgumentException("Adding this tag would create a cycle in the hierarchy");
         }
 
@@ -100,6 +102,6 @@ public class CategoryTag extends Tag {
         return "CategoryTag{" +
                "id=" + id +
                ", name='" + name + '\'' +
-           '}';
+               '}';
     }
 }

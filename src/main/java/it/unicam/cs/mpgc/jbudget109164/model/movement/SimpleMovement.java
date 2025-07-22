@@ -6,6 +6,13 @@ import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Represents a simple financial movement with details about the date, amount,
+ * description, and associated tags. This class implements the {@link Movement}
+ * interface and provides methods to access and manipulate movement details.
+ *
+ * @author Michele Cianni
+ */
 public final class SimpleMovement extends EntityWithTags<MovementDetails> implements Movement {
 
     private final UUID id;
@@ -52,11 +59,6 @@ public final class SimpleMovement extends EntityWithTags<MovementDetails> implem
     @Override
     public String getDescription() {
         return description;
-    }
-
-    @Override
-    public void addTags(Collection<Tag> tags) {
-        this.tags.addAll(tags);
     }
 
     @Override

@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service interface for managing budgets.
+ * This interface provides methods to create, update, delete, and retrieve budgets,
+ * as well as to get actual amounts for specific periods and tags.
+ *
+ * @param <P> the type of the period for the budget, which must extend {@link Temporal}.
+ */
 public interface BudgetService<P extends Temporal> {
 
     /**

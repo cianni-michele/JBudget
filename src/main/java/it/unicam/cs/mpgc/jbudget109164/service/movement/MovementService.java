@@ -10,14 +10,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service interface for managing financial movements.
+ * This interface provides methods to generate, retrieve, create, update, and delete movements,
+ * as well as to manage tags associated with movements.
+ *
+ * @author Michele Cianni
+ */
 public interface MovementService {
 
 
     /**
      * Generates scheduled movements based on the provided details, scheduled period, and tags.
      *
-     * @param amount
-     * @param description
+     * @param amount the amount for each generated movement
+     * @param description the description for each generated movement
      * @param tags            the tags to be associated with the generated movements
      * @param scheduledPeriod the scheduled period for which movements are to be generated
      * @return a list of generated movements

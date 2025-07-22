@@ -7,6 +7,13 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.DoubleStream;
 
+/**
+ * Default implementation of the {@link Statistics} interface.
+ * This class provides methods to calculate financial statistics such as total income,
+ * average income, total expenses, and average expenses for a given period based on a list of movements.
+ *
+ * @author Michele Cianni
+ */
 public class DefaultStatistics implements Statistics {
 
     private final Period period;

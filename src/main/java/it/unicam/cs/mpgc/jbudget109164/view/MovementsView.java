@@ -5,6 +5,8 @@ import it.unicam.cs.mpgc.jbudget109164.controller.tag.TagController;
 import it.unicam.cs.mpgc.jbudget109164.model.movement.Movement;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.util.io.FXMLResourceLoader;
+import it.unicam.cs.mpgc.jbudget109164.util.time.RecurrenceType;
+import it.unicam.cs.mpgc.jbudget109164.util.time.ScheduledPeriod;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MovementsView {
@@ -51,6 +54,9 @@ public class MovementsView {
 
     @FXML
     private Button addMovementButton;
+
+    @FXML
+    private Button addScheduledMovementsButton;
 
     @FXML
     private Button viewDetailsButton;
@@ -165,6 +171,7 @@ public class MovementsView {
 
     private void setupButtons() {
         addMovementButton.setOnAction(event -> handleAddMovement());
+        addScheduledMovementsButton.setOnAction(event -> handleAddScheduledMovements());
         viewDetailsButton.setOnAction(event -> handleViewDetails());
         refreshButton.setOnAction(event -> {
             currentPage = 0;
@@ -236,6 +243,178 @@ public class MovementsView {
                     );
                 } catch (NumberFormatException e) {
                     showError("Invalid amount format");
+                    return null;
+                }
+            }
+            return null;
+        });
+
+        return dialog;
+    }
+
+    private void handleAddScheduledMovements() {
+        try {
+            Dialog<List<Movement>> dialog = createScheduledMovementsDialog();
+
+            dialog.showAndWait().ifPresent(scheduledMovements -> {
+                loadMovements();
+                showSuccess(scheduledMovements.size() + " scheduled movements added successfully!");
+            });
+
+        } catch (Exception e) {
+            showError("Error adding scheduled movements: " + e.getMessage());
+        }
+    }
+
+    private Dialog<List<Movement>> createScheduledMovementsDialog() {
+        Dialog<List<Movement>> dialog = new Dialog<>();
+        dialog.setTitle("Add Scheduled Movements");
+        dialog.setHeaderText("Create recurring movements");
+
+        TextField descriptionField = new TextField();
+        TextField amountField = new TextField();
+        DatePicker fromDatePicker = new DatePicker(LocalDate.now());
+        DatePicker toDatePicker = new DatePicker(LocalDate.now().plusMonths(12));
+        ComboBox<String> frequencyCombo = new ComboBox<>();
+        Spinner<Integer> dayOfMonthSpinner = new Spinner<>(1, 31, 1);
+
+        ComboBox<Tag> tagComboBox = new ComboBox<>();
+        ListView<Tag> selectedTagsList = new ListView<>();
+        selectedTagsList.setPrefHeight(80);
+
+        tagComboBox.setPromptText("Select tags...");
+        tagComboBox.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Tag tag, boolean empty) {
+                super.updateItem(tag, empty);
+                if (empty || tag == null) {
+                    setText(null);
+                } else {
+                    setText(tag.getName());
+                }
+            }
+        });
+
+        tagComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Tag tag, boolean empty) {
+                super.updateItem(tag, empty);
+                if (empty || tag == null) {
+                    setText("Select tags...");
+                } else {
+                    setText(tag.getName());
+                }
+            }
+        });
+
+        tagComboBox.setOnAction(event -> {
+            Tag selectedTag = tagComboBox.getSelectionModel().getSelectedItem();
+            if (selectedTag != null && !selectedTagsList.getItems().contains(selectedTag)) {
+                selectedTagsList.getItems().add(selectedTag);
+                tagComboBox.getSelectionModel().clearSelection();
+            }
+        });
+
+        selectedTagsList.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(Tag tag, boolean empty) {
+                super.updateItem(tag, empty);
+                if (empty || tag == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(tag.getName());
+
+                    Button removeButton = new Button("×");
+                    removeButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-padding: 2px 6px;");
+                    removeButton.setOnAction(e -> selectedTagsList.getItems().remove(tag));
+                    setGraphic(removeButton);
+                }
+            }
+        });
+
+        descriptionField.setPromptText("Movement description");
+        amountField.setPromptText("Amount (+ for income, - for expense)");
+
+        frequencyCombo.getItems().addAll("MONTHLY", "QUARTERLY", "YEARLY");
+        frequencyCombo.setValue("MONTHLY");
+
+        try {
+            List<Tag> availableTags = tagController.getAllTags();
+            tagComboBox.getItems().setAll(availableTags);
+        } catch (Exception e) {
+            showError("Error loading tags: " + e.getMessage());
+        }
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Description:"), 0, 0);
+        grid.add(descriptionField, 1, 0);
+        grid.add(new Label("Amount:"), 0, 1);
+        grid.add(amountField, 1, 1);
+        grid.add(new Label("From Date:"), 0, 2);
+        grid.add(fromDatePicker, 1, 2);
+        grid.add(new Label("To Date:"), 0, 3);
+        grid.add(toDatePicker, 1, 3);
+        grid.add(new Label("Frequency:"), 0, 4);
+        grid.add(frequencyCombo, 1, 4);
+        grid.add(new Label("Day of Month:"), 0, 5);
+        grid.add(dayOfMonthSpinner, 1, 5);
+        grid.add(new Label("Select Tags:"), 0, 6);
+        grid.add(tagComboBox, 1, 6);
+        grid.add(new Label("Selected Tags:"), 0, 7);
+        grid.add(selectedTagsList, 1, 7);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDisable(true);
+
+        Runnable validateFields = () -> {
+            boolean valid = !descriptionField.getText().trim().isEmpty() &&
+                            !amountField.getText().trim().isEmpty() &&
+                            fromDatePicker.getValue() != null &&
+                            toDatePicker.getValue() != null &&
+                            fromDatePicker.getValue().isBefore(toDatePicker.getValue()) &&
+                            frequencyCombo.getValue() != null;
+            okButton.setDisable(!valid);
+        };
+
+        descriptionField.textProperty().addListener((obs, old, val) -> validateFields.run());
+        amountField.textProperty().addListener((obs, old, val) -> validateFields.run());
+        fromDatePicker.valueProperty().addListener((obs, old, val) -> validateFields.run());
+        toDatePicker.valueProperty().addListener((obs, old, val) -> validateFields.run());
+        frequencyCombo.valueProperty().addListener((obs, old, val) -> validateFields.run());
+
+        dialog.setResultConverter(buttonType -> {
+            if (buttonType == ButtonType.OK) {
+                try {
+                    double amount = Double.parseDouble(amountField.getText().trim());
+                    String description = descriptionField.getText().trim();
+
+                    List<UUID> selectedTagIds = selectedTagsList.getItems()
+                            .stream()
+                            .map(Tag::getId)
+                            .toList();
+
+                    ScheduledPeriod scheduledPeriod = ScheduledPeriod.of(
+                            fromDatePicker.getValue(),
+                            toDatePicker.getValue(),
+                            RecurrenceType.valueOf(frequencyCombo.getValue()),
+                            dayOfMonthSpinner.getValue()
+                    );
+
+                    return movementController.generateScheduledMovements(
+                            amount, description, selectedTagIds, scheduledPeriod
+                    );
+
+                } catch (NumberFormatException e) {
+                    showError("Invalid amount format");
+                    return null;
+                } catch (Exception e) {
+                    showError("Error creating scheduled movements: " + e.getMessage());
                     return null;
                 }
             }

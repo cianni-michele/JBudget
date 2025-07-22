@@ -9,6 +9,7 @@ import java.util.*;
  * @author Michele Cianni
  */
 public abstract class Tag {
+
     protected final UUID id;
     protected final String name;
     protected final Set<Tag> parents = new HashSet<>();

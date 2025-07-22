@@ -20,6 +20,8 @@ import java.util.UUID;
  *  "childrenIds": [2, 3]
  * }
  * </pre>
+ *
+ * @author Michele Cianni
  */
 public class TagDTOTypeAdapter implements CustomTypeAdapter<TagDTO> {
 

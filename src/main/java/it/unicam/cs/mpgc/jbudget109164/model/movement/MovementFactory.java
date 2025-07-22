@@ -5,6 +5,13 @@ import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * Factory interface for creating instances of {@link Movement}.
+ * This interface provides methods to create new movements with specified details,
+ * optionally with a specific ID or a randomly generated one.
+ *
+ * @author Michele Cianni
+ */
 public interface MovementFactory {
 
     /**
@@ -33,7 +40,7 @@ public interface MovementFactory {
      * @param tags    the tags to be associated with the movement
      * @return a new Movement instance with the specified details and tags
      */
-    default Movement createMovement(MovementDetails details,  Collection<Tag> tags) {
+    default Movement createMovement(MovementDetails details, Collection<Tag> tags) {
         return createMovement(UUID.randomUUID(), details, tags);
     }
 

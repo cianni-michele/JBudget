@@ -3,9 +3,11 @@ package it.unicam.cs.mpgc.jbudget109164.controller.movement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import it.unicam.cs.mpgc.jbudget109164.service.tag.TagService;
+import it.unicam.cs.mpgc.jbudget109164.util.time.ScheduledPeriod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +31,24 @@ public final class MovementController {
         this.tagService = tagService;
     }
 
+    public List<Movement> generateScheduledMovements(double amount, String description, List<UUID> tagIds, ScheduledPeriod scheduledPeriod) {
+        LOGGER.debug("Generating scheduled movements with amount: {}, description: {}, tagIds: {}, scheduledPeriod: {}",
+                     amount, description, tagIds, scheduledPeriod);
+
+        validateParameters(amount, description, scheduledPeriod);
+
+        List<Tag> tags = tagIds.stream().map(tagService::getTagById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        List<Movement> scheduledMovements = movementService.generateScheduledMovements(amount, description, tags, scheduledPeriod);
+
+        LOGGER.info("Generated {} scheduled movements", scheduledMovements.size());
+
+        return scheduledMovements;
+    }
+
     public List<Movement> getMovements(int page, int size, String sortBy, boolean asc) {
         LOGGER.debug("Retrieving all movements");
 
@@ -36,7 +56,7 @@ public final class MovementController {
 
         LOGGER.info("Total movements found: {}", movements.size());
 
-        return movements;    
+        return movements;
     }
 
     public Movement createMovement(LocalDate date, String description, double amount) {

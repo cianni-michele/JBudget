@@ -2,6 +2,14 @@ package it.unicam.cs.mpgc.jbudget109164.model.statistic;
 
 import it.unicam.cs.mpgc.jbudget109164.util.time.Period;
 
+/**
+ * Represents a collection of financial statistics for a specific period.
+ * This interface provides methods to retrieve various financial metrics such as
+ * total income, total expenses, average income, and average expenses.
+ * The balance is calculated as the difference between total income and total expenses.
+ *
+ * @author Michele Cianni
+ */
 public interface Statistics {
 
     /**

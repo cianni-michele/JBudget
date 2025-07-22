@@ -24,6 +24,8 @@ import java.util.UUID;
  *  "tags": [ "123e4567-e89b-12d3-a456-426614174000", "123e4567-e89b-12d3-a456-426614174001" ]
  * }
  * </pre>
+ *
+ * @author Michele Cianni
  */
 public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
 

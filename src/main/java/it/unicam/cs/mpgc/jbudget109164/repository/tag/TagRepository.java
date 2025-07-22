@@ -6,6 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Repository interface for managing {@link TagDTO} objects.
+ * This interface defines methods for checking existence, finding, deleting, and saving tag DTOs.
+ * It is designed to be implemented by classes that provide specific storage mechanisms (e.g., in-memory, database).
+ *
+ * @author Michele Cianni
+ */
 public interface TagRepository {
 
     /**

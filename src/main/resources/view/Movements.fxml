@@ -38,6 +38,7 @@
 
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Button fx:id="addMovementButton" text="Add Movement" styleClass="action-button"/>
+                <Button fx:id="addScheduledMovementsButton" text="Add Scheduled Movements" styleClass="action-button"/>
                 <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
                 <Button fx:id="refreshButton" text="Refresh" styleClass="action-button"/>
             </HBox>

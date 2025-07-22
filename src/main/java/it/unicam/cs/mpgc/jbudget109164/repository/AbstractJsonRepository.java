@@ -13,12 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Abstract base class for JSON repositories.
+ * This class provides common functionality for reading and writing JSON files,
+ * managing file paths, and initializing the repository directory.
+ *
+ * @param <D> the type of data handled by the repository
+ * @author Michele Cianni
+ */
 public abstract class AbstractJsonRepository<D> {
 
-    private static final Logger LOGGER = LogManager.getLogger(AbstractJsonRepository.class);
-
     protected static final String JSON_EXTENSION = ".json";
-
+    private static final Logger LOGGER = LogManager.getLogger(AbstractJsonRepository.class);
     protected final Map<UUID, Path> filesPath;
 
     protected final Gson gson;

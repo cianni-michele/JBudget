@@ -17,11 +17,13 @@ import java.util.UUID;
  * <pre>
  * {
  *  "id": "123e4567-e89b-12d3-a456-426614174000",
- *  "tagId": "123e4567-e89b-12d3-a456-426614174001",
+ *  "tag": "123e4567-e89b-12d3-a456-426614174001",
  *  "period": "2023-10",
  *  "expectedAmount": 1000.0
  * }
  * </pre>
+ *
+ * @author Michele Cianni
  */
 public class BudgetDTOTypeAdapter implements CustomTypeAdapter<BudgetDTO> {
 
