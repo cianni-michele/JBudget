@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="500.0" prefWidth="700.0"
+            stylesheets="@/css/style.css"
+            style="-fx-background-color: #ecf0f1;">
+
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <Label text="Statistics" styleClass="title-label"/>
+
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Select Period" styleClass="subtitle-label"/>
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <VBox spacing="5">
+                    <Label text="Start Date:" styleClass="label-bold"/>
+                    <DatePicker fx:id="startDatePicker" styleClass="text-field"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="End Date:" styleClass="label-bold"/>
+                    <DatePicker fx:id="endDatePicker" styleClass="text-field"/>
+                </VBox>
+                <Button fx:id="calculateButton" text="Calculate Statistics" styleClass="action-button"/>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Results" styleClass="subtitle-label"/>
+
+            <GridPane hgap="30" vgap="15" style="-fx-padding: 10;">
+                <Label text="Metric" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label text="Value" styleClass="label-bold"
+                       GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Separator GridPane.columnIndex="0" GridPane.rowIndex="1"
+                           GridPane.columnSpan="2"/>
+
+                <Label text="Total Income:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="totalIncomeLabel" styleClass="data-label"
+                       GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="Total Expenses:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="totalExpensesLabel" styleClass="data-label"
+                       GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="Balance:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="balanceLabel" styleClass="data-label"
+                       GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <Label text="Average Income:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <Label fx:id="averageIncomeLabel" styleClass="data-label"
+                       GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                <Label text="Average Expenses:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <Label fx:id="averageExpensesLabel" styleClass="data-label"
+                       GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            </GridPane>
+        </VBox>
+
+    </VBox>
+</AnchorPane>

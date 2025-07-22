@@ -11,14 +11,15 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-public abstract class AbstractJsonRepository<I, D> {
+public abstract class AbstractJsonRepository<D> {
 
     private static final Logger LOGGER = LogManager.getLogger(AbstractJsonRepository.class);
 
     protected static final String JSON_EXTENSION = ".json";
 
-    protected final Map<I, Path> filesPath;
+    protected final Map<UUID, Path> filesPath;
 
     protected final Gson gson;
 
@@ -58,17 +59,9 @@ public abstract class AbstractJsonRepository<I, D> {
         LOGGER.info("{} initialized with {} elements", this.getClass(), filesPath.size());
     }
 
-    private I getKey(File file) {
-        return parseToId(file.getName().replace(JSON_EXTENSION, ""));
+    private UUID getKey(File file) {
+        return UUID.fromString(file.getName().replace(JSON_EXTENSION, ""));
     }
-
-    /**
-     * Parses the given string ID to the appropriate type I.
-     *
-     * @param id the string representation of the ID
-     * @return the parsed ID of type I
-     */
-    protected abstract I parseToId(String id);
 
     protected D readFromFile(Path filePath, Class<D> type) {
         try (Reader reader = new FileReader(filePath.toFile())) {
@@ -112,5 +105,5 @@ public abstract class AbstractJsonRepository<I, D> {
      *
      * @param id the ID to validate
      */
-    protected abstract void validateId(I id);
+    protected abstract void validateId(UUID id);
 }

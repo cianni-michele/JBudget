@@ -7,9 +7,10 @@ import it.unicam.cs.mpgc.jbudget109164.mapper.tag.TagMapper;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class SimpleMovementMapper extends MovementMapper {
+public final class SimpleMovementMapper extends MovementMapper {
 
     public SimpleMovementMapper(TagMapper tagMapper) {
         super(tagMapper);
@@ -24,7 +25,7 @@ public class SimpleMovementMapper extends MovementMapper {
                 dto.amount(),
                 dto.tags() != null ?
                         Arrays.stream(dto.tags()).map(tagMapper::toModel).collect(Collectors.toSet())
-                        : Collections.emptySet()
+                        : new HashSet<>()
         );
     }
 }

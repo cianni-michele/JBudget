@@ -3,9 +3,12 @@ package it.unicam.cs.mpgc.jbudget109164.service.budget;
 import it.unicam.cs.mpgc.jbudget109164.model.budget.Budget;
 import it.unicam.cs.mpgc.jbudget109164.model.budget.BudgetDetails;
 import it.unicam.cs.mpgc.jbudget109164.model.budget.BudgetFactory;
+import it.unicam.cs.mpgc.jbudget109164.model.movement.Movement;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.repository.budget.BudgetRepository;
 import it.unicam.cs.mpgc.jbudget109164.mapper.budget.BudgetMapper;
+import it.unicam.cs.mpgc.jbudget109164.service.movement.MovementService;
+import it.unicam.cs.mpgc.jbudget109164.util.time.Period;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,20 +17,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BudgetServiceImpl implements BudgetService<YearMonth> {
+public class MonthlyBudgetService implements BudgetService<YearMonth> {
 
-    private static final Logger LOGGER = LogManager.getLogger(BudgetServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(MonthlyBudgetService.class);
 
     private final BudgetRepository repository;
     private final BudgetFactory<YearMonth> factory;
     private final BudgetMapper<YearMonth> mapper;
 
-    public BudgetServiceImpl(BudgetRepository repository,
-                             BudgetFactory<YearMonth> factory,
-                             BudgetMapper<YearMonth> mapper) {
+    private final MovementService movementService;
+
+    public MonthlyBudgetService(BudgetRepository repository,
+                                BudgetFactory<YearMonth> factory,
+                                BudgetMapper<YearMonth> mapper,
+                                MovementService movementService) {
         this.repository = repository;
         this.factory = factory;
         this.mapper = mapper;
+        this.movementService = movementService;
     }
 
     @Override
@@ -107,19 +114,42 @@ public class BudgetServiceImpl implements BudgetService<YearMonth> {
     }
 
     @Override
-    public double getExpectedAmount(YearMonth period) {
-        return getAllBudgets().stream().
-                filter(budget -> budget.getPeriod().equals(period))
-                .mapToDouble(Budget::getExpectedAmount)
+    public double getActualAmount(YearMonth period) {
+        LOGGER.debug("Calculating actual amount for period: {}", period);
+
+        Period monthPeriod = Period.of(
+                period.atDay(1),
+                period.atEndOfMonth()
+        );
+
+        List<Movement> movements = movementService.getMovementsByPeriod(monthPeriod);
+
+        double actualAmount = movements.stream()
+                .mapToDouble(Movement::getAmount)
+                .filter(amount -> amount < 0)
                 .sum();
+
+        LOGGER.info("Actual amount for period {}: {}", period, actualAmount);
+        return actualAmount;
     }
 
     @Override
-    public double getExpectedAmount(Tag tag, YearMonth period) {
-        return getAllBudgets().stream()
-                .filter(budget -> budget.getTag().equals(tag))
-                .filter(budget -> budget.getPeriod().equals(period))
-                .mapToDouble(Budget::getExpectedAmount)
+    public double getActualAmount(Tag tag, YearMonth period) {
+        LOGGER.debug("Calculating actual amount for tag: {} and period: {}", tag, period);
+
+        Period monthPeriod = Period.of(
+                period.atDay(1),
+                period.atEndOfMonth()
+        );
+
+        List<Movement> movements = movementService.getMovementsByTagAndPeriod(tag, monthPeriod);
+
+        double actualAmount = movements.stream()
+                .mapToDouble(Movement::getAmount)
+                .filter(amount -> amount < 0)
                 .sum();
+
+        LOGGER.info("Actual amount for tag {} in period {}: {}", tag, period, actualAmount);
+        return actualAmount;
     }
 }

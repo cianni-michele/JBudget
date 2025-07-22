@@ -6,7 +6,6 @@ public record TagDTO(
         UUID id,
         String name,
         TagDTO[] children) {
-    private static final Builder BUILDER = new Builder();
 
     public static class Builder {
         private UUID id;
@@ -44,6 +43,6 @@ public record TagDTO(
     }
 
     public static Builder builder() {
-        return BUILDER;
+        return new Builder();
     }
 }

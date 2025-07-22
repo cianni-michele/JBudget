@@ -1,8 +1,10 @@
 package it.unicam.cs.mpgc.jbudget109164.model;
 
-public interface Entity<I, D extends EntityDetails> {
+import java.util.UUID;
 
-    I getId();
+public interface Entity<D extends EntityDetails> {
+
+    UUID getId();
 
     D getDetails();
     

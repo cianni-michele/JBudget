@@ -2,35 +2,70 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      stylesheets="@/css/style.css"
-      spacing="15" style="-fx-padding: 20;">
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="500.0"
+            stylesheets="@/css/style.css"
+            style="-fx-background-color: #ecf0f1;">
 
-    <Label text="Movement Details" styleClass="title-label"/>
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
 
-    <GridPane hgap="15" vgap="10">
-        <columnConstraints>
-            <ColumnConstraints minWidth="100" prefWidth="120"/>
-            <ColumnConstraints minWidth="200" prefWidth="300"/>
-        </columnConstraints>
+        <Label text="Movement Details" styleClass="title-label"/>
 
-        <Label text="Date:" styleClass="label-bold"/>
-        <Label fx:id="dateLabel" GridPane.columnIndex="1" styleClass="data-label"/>
+        <VBox spacing="15"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
 
-        <Label text="Description:" GridPane.rowIndex="1" styleClass="label-bold"/>
-        <Label fx:id="descLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="data-label"/>
+            <Label text="Movement Information" styleClass="subtitle-label"/>
 
-        <Label text="Amount:" GridPane.rowIndex="2" styleClass="label-bold"/>
-        <Label fx:id="amountLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="data-label"/>
-    </GridPane>
+            <GridPane hgap="15" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="100" prefWidth="120"/>
+                    <ColumnConstraints minWidth="200" prefWidth="300"/>
+                </columnConstraints>
 
-    <Separator/>
+                <Label text="Date:" styleClass="label-bold"/>
+                <Label fx:id="dateLabel" GridPane.columnIndex="1" styleClass="data-label"/>
 
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="Add Tag" fx:id="addTagButton" styleClass="action-button"/>
-        <Button text="Edit Movement" fx:id="editButton" styleClass="action-button"/>
-        <Button text="Delete Movement" fx:id="deleteButton" styleClass="danger-button"/>
-    </HBox>
+                <Label text="Description:" GridPane.rowIndex="1" styleClass="label-bold"/>
+                <Label fx:id="descLabel" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="data-label"/>
 
-</VBox>
+                <Label text="Amount:" GridPane.rowIndex="2" styleClass="label-bold"/>
+                <Label fx:id="amountLabel" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="data-label"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Sostituisci la sezione tags con questa: -->
+        <VBox spacing="15" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+
+            <Label text="Tags" styleClass="subtitle-label"/>
+
+            <VBox spacing="10">
+                <Label text="Selected Tags:" styleClass="label-bold"/>
+
+                <FlowPane fx:id="tagsFlowPane" hgap="5" vgap="5" prefWrapLength="300"/>
+
+                <ComboBox fx:id="tagsComboBox" promptText="Select a tag to add..." prefWidth="300"/>
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="addTagButton" text="Add Selected Tag" styleClass="action-button"/>
+                <Button fx:id="removeTagButton" text="Remove Selected Tag" styleClass="danger-button" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="10"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+
+            <Label text="Operations" styleClass="subtitle-label"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="editButton" text="Edit Movement" styleClass="action-button"/>
+                <Button fx:id="deleteButton" text="Delete Movement" styleClass="danger-button"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>

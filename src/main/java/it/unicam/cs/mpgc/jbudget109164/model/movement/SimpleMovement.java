@@ -6,7 +6,7 @@ import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import java.time.LocalDate;
 import java.util.*;
 
-public final class SimpleMovement extends EntityWithTags<UUID, MovementDetails> implements Movement {
+public final class SimpleMovement extends EntityWithTags<MovementDetails> implements Movement {
 
     private final UUID id;
 
@@ -15,10 +15,6 @@ public final class SimpleMovement extends EntityWithTags<UUID, MovementDetails> 
     private final String description;
 
     private final double amount;
-
-    public SimpleMovement(MovementDetails details) {
-        this(UUID.randomUUID(), details, new HashSet<>());
-    }
 
     public SimpleMovement(UUID id, MovementDetails details, Set<Tag> tags) {
         this(id, details.date(), details.description(), details.amount(), tags);
@@ -56,6 +52,11 @@ public final class SimpleMovement extends EntityWithTags<UUID, MovementDetails> 
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public void addTags(Collection<Tag> tags) {
+        this.tags.addAll(tags);
     }
 
     @Override

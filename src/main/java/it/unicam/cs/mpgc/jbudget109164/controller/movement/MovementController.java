@@ -15,7 +15,7 @@ import it.unicam.cs.mpgc.jbudget109164.model.movement.MovementDetails;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.service.movement.MovementService;
 
-public class MovementController {
+public final class MovementController {
 
     private static final Logger LOGGER = LogManager.getLogger(MovementController.class);
 
@@ -29,10 +29,10 @@ public class MovementController {
         this.tagService = tagService;
     }
 
-    public List<Movement> getMovements(int page, int size, String sortBy, boolean desc) {
+    public List<Movement> getMovements(int page, int size, String sortBy, boolean asc) {
         LOGGER.debug("Retrieving all movements");
 
-        List<Movement> movements = movementService.getMovements(page, size, sortBy, desc);
+        List<Movement> movements = movementService.getMovements(page, size, sortBy, asc);
 
         LOGGER.info("Total movements found: {}", movements.size());
 
@@ -86,11 +86,26 @@ public class MovementController {
         return movementService.addTagToMovement(tag, movementId);
     }
 
+    public Movement removeTagFromMovement(UUID tagId, UUID movementId) {
+        LOGGER.debug("Removing tag with ID {} from movement with ID {}", tagId, movementId);
+
+        validateParameters(tagId, movementId);
+
+        Tag tag = tagService.getTagById(tagId)
+                .orElseThrow(() -> new TagNotFoundException("Tag not found with ID: " + tagId));
+
+        return movementService.removeTagFromMovement(tag, movementId);
+    }
+
     private void validateParameters(Object... params) {
         for (Object param : params) {
             if (Objects.isNull(param)) {
                 throw new IllegalArgumentException("Parameter cannot be null");
             }
         }
-    }    
+    }
+
+    public int getTotalMovementsCount() {
+        return movementService.getTotalMovementsCount();
+    }
 }

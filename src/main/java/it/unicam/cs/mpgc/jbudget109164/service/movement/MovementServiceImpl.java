@@ -1,9 +1,11 @@
 package it.unicam.cs.mpgc.jbudget109164.service.movement;
 
 import it.unicam.cs.mpgc.jbudget109164.exception.service.MovementNotFoundException;
+import it.unicam.cs.mpgc.jbudget109164.util.time.ScheduledPeriod;
 import it.unicam.cs.mpgc.jbudget109164.model.movement.Movement;
 import it.unicam.cs.mpgc.jbudget109164.model.movement.MovementDetails;
 import it.unicam.cs.mpgc.jbudget109164.model.movement.MovementFactory;
+import it.unicam.cs.mpgc.jbudget109164.util.time.Period;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.repository.movement.MovementRepository;
 import it.unicam.cs.mpgc.jbudget109164.mapper.movement.MovementMapper;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class MovementServiceImpl implements MovementService {
 
@@ -29,14 +32,29 @@ public class MovementServiceImpl implements MovementService {
         this.mapper = mapper;
     }
 
+    @Override
+    public List<Movement> generateScheduledMovements(double amount, String description, List<Tag> tags,
+                                                     ScheduledPeriod scheduledPeriod) {
+        List<Movement> movements = new ArrayList<>();
+
+        scheduledPeriod.forEachOccurrence(date -> {
+            MovementDetails movementDetails = new MovementDetails(date, description, amount);
+            Movement movement = factory.createMovement(movementDetails, tags);
+            repository.save(mapper.toDTO(movement));
+            movements.add(movement);
+        });
+
+        return movements;
+    }
+
     //Is better to delegate the pagination and sorting to the repository layer
     @Override
-    public List<Movement> getMovements(int page, int size, String sortBy, boolean desc) {
+    public List<Movement> getMovements(int page, int size, String sortBy, boolean asc) {
         LOGGER.debug("Retrieving movements - Page: {}, Size: {}", page, size);
 
         List<Movement> allMovements = repository.findAll().stream()
                 .map(mapper::toModel)
-                .sorted(getComparator(sortBy, desc))
+                .sorted(getComparator(sortBy, asc))
                 .toList();
 
         int fromIndex = page * size;
@@ -54,28 +72,37 @@ public class MovementServiceImpl implements MovementService {
     }
 
 
-    private Comparator<? super Movement> getComparator(String sortBy, boolean desc) {
-        return switch (sortBy.toLowerCase()) {
-            case "amount" -> getAmountComparator(desc);
-            case "date" -> getDateComparator(desc);
-            default -> Comparator.comparing(Movement::getDate).thenComparing(Movement::getAmount);
+    private Comparator<? super Movement> getComparator(String sortBy, boolean asc) {
+        Comparator<? super Movement> comparator = switch (sortBy.toUpperCase()) {
+            case "AMOUNT" -> {
+                LOGGER.debug("Sorting movements by amount");
+                yield Comparator.comparing(Movement::getAmount);
+            }
+
+            case "DESCRIPTION" -> {
+                LOGGER.debug("Sorting movements by description");
+                yield Comparator.comparing(Movement::getDescription, Comparator.nullsLast(String::compareTo));
+            }
+
+            case "DATE" -> {
+                LOGGER.debug("Sorting movements by date");
+                yield Comparator.comparing(Movement::getDate);
+            }
+
+            default -> {
+                LOGGER.warn("Unknown sort field: {}. Defaulting to date sorting.", sortBy);
+                yield Comparator.comparing(Movement::getDate);
+            }
         };
-    }
 
-    private Comparator<? super Movement> getAmountComparator(boolean desc) {
-        Comparator<Movement> comparator = Comparator.comparing(Movement::getAmount);
-        if (desc) {
+        if (asc) {
+            LOGGER.debug("Sorting movements by {} in ascending order", sortBy);
+            return comparator;
+        } else {
+            LOGGER.debug("Sorting movements by {} in descending order", sortBy);
             return comparator.reversed();
         }
-        return comparator;
-    }
 
-    private Comparator<? super Movement> getDateComparator(boolean desc) {
-        Comparator<Movement> comparator = Comparator.comparing(Movement::getDate);
-        if (desc) {
-            return comparator.reversed();
-        }
-        return comparator;
     }
 
     @Override
@@ -128,7 +155,7 @@ public class MovementServiceImpl implements MovementService {
         if (!repository.existsById(id)) {
             throw movementNotFoundExceptionAndLogWarning(id);
         }
-        
+
         repository.deleteById(id);
 
         LOGGER.info("Movement with ID: {} deleted successfully", id);
@@ -155,8 +182,55 @@ public class MovementServiceImpl implements MovementService {
         return movement;
     }
 
+    @Override
+    public Movement removeTagFromMovement(Tag tag, UUID movementId) {
+        LOGGER.debug("Removing tag with ID {} from movement with ID {}", tag.getId(), movementId);
+
+        Optional<Movement> movementFound = getMovementById(movementId);
+
+        if (movementFound.isEmpty()) {
+            throw movementNotFoundExceptionAndLogWarning(movementId);
+        }
+
+        Movement movement = movementFound.get();
+        movement.removeTag(tag);
+
+        repository.save(mapper.toDTO(movement));
+
+        LOGGER.info("Tag removed successfully from movement with ID: {}", movementId);
+
+        return movement;
+    }
+
+    @Override
+    public int getTotalMovementsCount() {
+        return repository.count();
+    }
+
+    @Override
+    public List<Movement> getMovementsByPeriod(Period period) {
+        return getMovements(
+                movement -> period.contains(movement.getDate())
+        );
+    }
+
+    @Override
+    public List<Movement> getMovementsByTagAndPeriod(Tag tag, Period period) {
+        return getMovements(movement ->
+                movement.isTaggedBy(tag) && period.contains(movement.getDate())
+        );
+    }
+
+    private List<Movement> getMovements(Predicate<? super Movement> predicate) {
+        return repository.findAll().stream()
+                .map(mapper::toModel)
+                .filter(predicate)
+                .toList();
+    }
+
     private MovementNotFoundException movementNotFoundExceptionAndLogWarning(UUID id) {
-        LOGGER.warn("Movement with ID: {} does not exist", id);
-        return new MovementNotFoundException(MessageFormat.format("Movement with ID: {0} does not exist", id));
+        String message = MessageFormat.format("Movement with ID: {0} does not exist", id);
+        LOGGER.warn(message);
+        return new MovementNotFoundException(message);
     }
 }

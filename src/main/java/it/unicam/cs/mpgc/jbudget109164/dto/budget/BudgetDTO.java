@@ -4,20 +4,19 @@ import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 
 import java.util.UUID;
 
-public record BudgetDTO(UUID id, TagDTO tag, String period, double expectedAmount) {
-
-	private static final Builder BUILDER = new Builder();
+public record BudgetDTO(UUID id, TagDTO tag, String period, Double expectedAmount) {
 
 	public static class Builder {
 		private UUID id;
 		private TagDTO tag;
 		private String period;
-		private double expectedAmount;
+		private Double expectedAmount;
 
 		private Builder() {
 		}
 
 		public Builder copyFrom(BudgetDTO budget) {
+			this.id = budget.id;
 			this.tag = budget.tag;
 			this.period = budget.period;
 			this.expectedAmount = budget.expectedAmount;
@@ -39,7 +38,7 @@ public record BudgetDTO(UUID id, TagDTO tag, String period, double expectedAmoun
 			return this;
 		}
 
-		public Builder withExpectedAmount(double expectedAmount) {
+		public Builder withExpectedAmount(Double expectedAmount) {
 			this.expectedAmount = expectedAmount;
 			return this;
 		}
@@ -50,7 +49,7 @@ public record BudgetDTO(UUID id, TagDTO tag, String period, double expectedAmoun
 	}
 
 	public static Builder builder() {
-		return BUILDER;
+		return new Builder();
 	}
 
 }

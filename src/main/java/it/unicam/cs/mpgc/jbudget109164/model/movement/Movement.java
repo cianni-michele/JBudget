@@ -4,10 +4,10 @@ import it.unicam.cs.mpgc.jbudget109164.model.Entity;
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Set;
-import java.util.UUID;
 
-public interface Movement extends Entity<UUID, MovementDetails> {
+public interface Movement extends Entity<MovementDetails> {
 
     LocalDate getDate();
 
@@ -15,13 +15,15 @@ public interface Movement extends Entity<UUID, MovementDetails> {
 
     String getDescription();
 
+    void addTags(Collection<Tag> tags);
+
     void addTag(Tag tag);
 
     void removeTag(Tag tag);
 
-    boolean hasTag(Tag tag);
+    boolean isTaggedBy(Tag tag);
 
     Set<Tag> getTags();
 
-    Movement copy(MovementDetails details);    
+    Movement copy(MovementDetails details);
 }

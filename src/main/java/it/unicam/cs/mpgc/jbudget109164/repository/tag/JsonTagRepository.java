@@ -2,7 +2,6 @@ package it.unicam.cs.mpgc.jbudget109164.repository.tag;
 
 import it.unicam.cs.mpgc.jbudget109164.config.JsonRepositoryConfig;
 import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
-import it.unicam.cs.mpgc.jbudget109164.exception.repository.JsonRepositoryException;
 import it.unicam.cs.mpgc.jbudget109164.repository.AbstractJsonRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,12 +10,15 @@ import java.nio.file.Path;
 import java.util.*;
 
 @SuppressWarnings("DuplicatedCode")
-public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> implements TagRepository {
+public class JsonTagRepository extends AbstractJsonRepository<TagDTO> implements TagRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonTagRepository.class);
 
-    public JsonTagRepository(JsonRepositoryConfig config) {
+    private final EventBus eventBus;
+
+    public JsonTagRepository(JsonRepositoryConfig config, EventBus eventBus) {
         super(config);
+        this.eventBus = eventBus;
     }
 
     @Override
@@ -37,8 +39,8 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
     }
 
     @Override
-    public boolean existsById(UUID id) {
-        return filesPath.containsKey(id);
+    public boolean existsById(UUID tagId) {
+        return filesPath.containsKey(tagId);
     }
 
     @Override
@@ -95,7 +97,24 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
             throw exceptionAndLogError("Unable to delete tag with ID {} because it does not exist", tagId);
         }
 
+        eventBus.publish(() -> tagId);
+
+        removeRefFromParent(tagId);
+
         Path filePath = filesPath.get(tagId);
+
+        TagDTO tagDTO = readFromFile(filePath);
+
+        if (tagDTO.children() != null) {
+            for (TagDTO child : tagDTO.children()) {
+                UUID childId = child.id();
+                if (!existsById(childId)) {
+                    throw exceptionAndLogError("Unable to delete tag with ID {} because it has children that do not exist", tagId);
+                }
+                deleteById(childId);
+            }
+        }
+
 
         if (filePath != null && !filePath.toFile().delete()) {
             throw exceptionAndLogError("Failed to delete tag with ID {}", tagId);
@@ -106,9 +125,31 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
         LOGGER.info("Deleted tag with ID {}", tagId);
     }
 
-    @Override
-    protected UUID parseToId(String id) {
-        return UUID.fromString(id);
+    private void removeRefFromParent(UUID tagId) {
+        LOGGER.debug("Removing reference to tag with ID {} from its parent", tagId);
+
+        for (Path filePath : filesPath.values()) {
+            TagDTO parentTag = readFromFile(filePath);
+            if (parentTag.children() == null) {
+                continue;
+            }
+            List<TagDTO> updatedChildren = new ArrayList<>();
+            boolean found = false;
+            for (TagDTO child : parentTag.children()) {
+                if (child.id().equals(tagId)) {
+                    found = true;
+                } else {
+                    updatedChildren.add(child);
+                }
+            }
+            if (found) {
+                parentTag = TagDTO.builder().copyFrom(parentTag)
+                        .withChildren(updatedChildren.toArray(new TagDTO[0]))
+                        .build();
+                writeToFile(parentTag, filePath);
+                LOGGER.info("Removed reference to tag with ID {} from parent tag with ID {}", tagId, parentTag.id());
+            }
+        }
     }
 
     @Override
@@ -118,7 +159,6 @@ public class JsonTagRepository extends AbstractJsonRepository<UUID, TagDTO> impl
         }
 
         validateId(tag.id());
-        validateTagsReference(tag.children());
     }
 
     private void validateTagsReference(TagDTO[] children) {

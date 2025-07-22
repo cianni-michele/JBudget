@@ -10,4 +10,14 @@ public record BudgetDetails<P extends Temporal>(
         P period,
         double expectedAmount
 ) implements EntityDetails {
+
+    public BudgetDetails {
+        if (period == null) {
+            throw new IllegalArgumentException("Period cannot be null");
+        }
+        if (expectedAmount < 0) {
+            throw new IllegalArgumentException("Expected amount cannot be negative");
+        }
+    }
+
 }

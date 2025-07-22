@@ -4,6 +4,8 @@ import it.unicam.cs.mpgc.jbudget109164.config.JsonRepositoryConfig;
 import it.unicam.cs.mpgc.jbudget109164.dto.movement.MovementDTO;
 import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 import it.unicam.cs.mpgc.jbudget109164.repository.AbstractJsonRepository;
+import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagDeletedEvent;
+import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagDeletedEventListener;
 import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 @SuppressWarnings("LoggingSimilarMessage")
-public class JsonMovementRepository extends AbstractJsonRepository<UUID, MovementDTO> implements MovementRepository {
+public class JsonMovementRepository extends AbstractJsonRepository<MovementDTO>
+        implements MovementRepository, TagDeletedEventListener {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonMovementRepository.class);
 
@@ -114,11 +117,6 @@ public class JsonMovementRepository extends AbstractJsonRepository<UUID, Movemen
     }
 
     @Override
-    protected UUID parseToId(String movementId) {
-        return UUID.fromString(movementId);
-    }
-
-    @Override
     protected void validateDTO(MovementDTO movement) {
         if (movement == null) {
             throw exceptionAndLogError("Movement cannot be null");
@@ -186,5 +184,33 @@ public class JsonMovementRepository extends AbstractJsonRepository<UUID, Movemen
 
     private void writeToFile(Path movementPath, MovementDTO movement) {
         writeToFile(movementPath, MovementDTO.class, movement);
+    }
+
+    @Override
+    public int count() {
+        return filesPath.size();
+    }
+
+    @Override
+    public void onTagDeleted(TagDeletedEvent event) {
+        UUID tagId = event.deletedTagId();
+        LOGGER.debug("Removing tag references with ID {} from all movements", tagId);
+
+        for (Path movementPath : filesPath.values()) {
+            MovementDTO movement = readFromFile(movementPath, MovementDTO.class);
+            if (movement.tags() != null) {
+                List<TagDTO> updatedTags = Arrays.stream(movement.tags())
+                        .filter(tag -> !tag.id().equals(tagId))
+                        .toList();
+
+                if (updatedTags.size() != movement.tags().length) {
+                    MovementDTO updatedMovement = MovementDTO.builder().copyFrom(movement)
+                            .withTags(updatedTags.toArray(new TagDTO[0]))
+                            .build();
+                    writeToFile(movementPath, updatedMovement);
+                    LOGGER.info("Removed tag reference {} from movement {}", tagId, movement.id());
+                }
+            }
+        }
     }
 }

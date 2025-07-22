@@ -97,9 +97,9 @@ public class CategoryTag extends Tag {
 
     @Override
     public String toString() {
-        return "TagNode{" +
+        return "CategoryTag{" +
                "id=" + id +
                ", name='" + name + '\'' +
-               '}';
+           '}';
     }
 }

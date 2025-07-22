@@ -1,10 +1,13 @@
-package it.unicam.cs.mpgc.jbudget109164.view.controller;
+package it.unicam.cs.mpgc.jbudget109164.view;
 
 import it.unicam.cs.mpgc.jbudget109164.controller.movement.MovementController;
 import it.unicam.cs.mpgc.jbudget109164.controller.tag.TagController;
 import it.unicam.cs.mpgc.jbudget109164.model.movement.Movement;
+import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 import it.unicam.cs.mpgc.jbudget109164.util.io.FXMLResourceLoader;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,12 +20,19 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class MovementsViewController {
+public class MovementsView {
+
+    private static final int ITEMS_PER_PAGE = 20;
 
     private final MovementController movementController;
     private final TagController tagController;
     private final ObservableList<Movement> movementsList;
+
+    private int currentPage = 0;
+    private String currentSortBy = "date";
+    private boolean currentAscending = true;
 
     @FXML
     private TableView<Movement> movementsTable;
@@ -37,6 +47,9 @@ public class MovementsViewController {
     private TableColumn<Movement, Double> amountColumn;
 
     @FXML
+    private TableColumn<Movement, String> tagsColumn;
+
+    @FXML
     private Button addMovementButton;
 
     @FXML
@@ -45,9 +58,13 @@ public class MovementsViewController {
     @FXML
     private Button refreshButton;
 
+    @FXML
+    private Pagination movementsPagination;
 
-    public MovementsViewController(MovementController movementController,
-                                   TagController tagController) {
+
+
+    public MovementsView(MovementController movementController,
+                         TagController tagController) {
         this.movementController = movementController;
         this.tagController = tagController;
         this.movementsList = FXCollections.observableArrayList();
@@ -56,6 +73,7 @@ public class MovementsViewController {
     @FXML
     public void initialize() {
         setupTable();
+        setupPagination();
         setupButtons();
         loadMovements();
     }
@@ -64,6 +82,46 @@ public class MovementsViewController {
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        tagsColumn.setCellValueFactory(cellData -> {
+            Movement movement = cellData.getValue();
+            if (movement.getTags().isEmpty()) {
+                return new SimpleStringProperty("No tags");
+            }
+            String tagNames = movement.getTags().stream()
+                    .map(Tag::getName)
+                    .collect(Collectors.joining(", "));
+            return new SimpleStringProperty(tagNames);
+        });
+
+        dateColumn.setSortable(true);
+        descriptionColumn.setSortable(true);
+        amountColumn.setSortable(true);
+
+        movementsTable.getSortOrder().addListener(
+                (ListChangeListener<TableColumn<Movement, ?>>) change -> {
+                    if (!movementsTable.getSortOrder().isEmpty()) {
+                        TableColumn<Movement, ?> sortedColumn = movementsTable.getSortOrder().getFirst();
+
+                        if (sortedColumn == dateColumn) {
+                            currentSortBy = "date";
+                        } else if (sortedColumn == descriptionColumn) {
+                            currentSortBy = "description";
+                        } else if (sortedColumn == amountColumn) {
+                            currentSortBy = "amount";
+                        }
+
+                        currentAscending = sortedColumn.getSortType() == TableColumn.SortType.ASCENDING;
+
+                        currentPage = 0;
+                        movementsPagination.setCurrentPageIndex(0);
+                        loadMovements();
+                    }
+                }
+        );
+
+        dateColumn.setSortType(TableColumn.SortType.ASCENDING);
+        movementsTable.getSortOrder().add(dateColumn);
 
         amountColumn.setCellFactory(column -> new TableCell<Movement, Double>() {
             @Override
@@ -96,10 +154,23 @@ public class MovementsViewController {
         });
     }
 
+    private void setupPagination() {
+        movementsPagination.setCurrentPageIndex(0);
+        movementsPagination.currentPageIndexProperty().addListener((obs, oldPage, newPage) -> {
+            currentPage = newPage.intValue() * ITEMS_PER_PAGE;
+            loadMovements();
+        });
+        updatePaginationCount();
+    }
+
     private void setupButtons() {
         addMovementButton.setOnAction(event -> handleAddMovement());
         viewDetailsButton.setOnAction(event -> handleViewDetails());
-        refreshButton.setOnAction(event -> loadMovements() );
+        refreshButton.setOnAction(event -> {
+            currentPage = 0;
+            movementsPagination.setCurrentPageIndex(0);
+            loadMovements();
+        });
     }
 
     private void handleAddMovement() {
@@ -108,11 +179,11 @@ public class MovementsViewController {
 
             dialog.showAndWait().ifPresent(newMovement -> {
                 loadMovements();
-                showSuccessAlert("Movement added successfully!");
+                showSuccess("Movement added successfully!");
             });
 
-        } catch (Exception e){
-           showErrorAlert("Error adding movement: " + e.getMessage());
+        } catch (Exception e) {
+            showError("Error adding movement: " + e.getMessage());
         }
     }
 
@@ -146,8 +217,8 @@ public class MovementsViewController {
 
         Runnable validateFields = () -> {
             boolean valid = datePicker.getValue() != null &&
-                    !descriptionField.getText().trim().isEmpty() &&
-                    !amountField.getText().trim().isEmpty();
+                            !descriptionField.getText().trim().isEmpty() &&
+                            !amountField.getText().trim().isEmpty();
             okButton.setDisable(!valid);
         };
 
@@ -164,7 +235,7 @@ public class MovementsViewController {
                             Double.parseDouble(amountField.getText().trim())
                     );
                 } catch (NumberFormatException e) {
-                    showErrorAlert("Invalid amount format");
+                    showError("Invalid amount format");
                     return null;
                 }
             }
@@ -184,7 +255,7 @@ public class MovementsViewController {
     private void openMovementDetails(Movement movement) {
         try {
             FXMLLoader loader = FXMLResourceLoader.getLoader("MovementDetails");
-            MovementDetailsViewController controller = new MovementDetailsViewController(movementController, tagController);
+            MovementDetailsView controller = new MovementDetailsView(movementController, tagController);
             loader.setController(controller);
 
             Stage detailsStage = new Stage();
@@ -199,21 +270,36 @@ public class MovementsViewController {
 
             loadMovements();
         } catch (Exception e) {
-            showErrorAlert("Error opening movement details: " + e.getMessage());
+            showError("Error opening movement details: " + e.getMessage());
         }
     }
 
     private void loadMovements() {
         try {
-            List<Movement> movements = movementController.getMovements(0, 20, "date", true);
+            List<Movement> movements = movementController.getMovements(
+                    currentPage,
+                    ITEMS_PER_PAGE,
+                    currentSortBy,
+                    currentAscending
+            );
             movementsList.setAll(movements);
+            updatePaginationCount();
         } catch (Exception e) {
-            showErrorAlert("Error loading movements" + e.getMessage());
+            showError("Error loading movements" + e.getMessage());
         }
-
     }
 
-    private void showErrorAlert(String message) {
+    private void updatePaginationCount() {
+        try {
+            int totalMovements = movementController.getTotalMovementsCount();
+            int pageCount = (int) Math.ceil((double) totalMovements / ITEMS_PER_PAGE);
+            movementsPagination.setPageCount(Math.max(1, pageCount));
+        } catch (Exception e) {
+            movementsPagination.setPageCount(1);
+        }
+    }
+
+    private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -221,7 +307,7 @@ public class MovementsViewController {
         alert.showAndWait();
     }
 
-    private void showSuccessAlert(String message) {
+    private void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
         alert.setHeaderText(null);

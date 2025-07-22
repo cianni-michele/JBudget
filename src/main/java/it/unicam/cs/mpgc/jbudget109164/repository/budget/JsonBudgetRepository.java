@@ -5,6 +5,8 @@ import it.unicam.cs.mpgc.jbudget109164.dto.budget.BudgetDTO;
 import it.unicam.cs.mpgc.jbudget109164.dto.tag.TagDTO;
 import it.unicam.cs.mpgc.jbudget109164.exception.repository.JsonRepositoryException;
 import it.unicam.cs.mpgc.jbudget109164.repository.AbstractJsonRepository;
+import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagDeletedEvent;
+import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagDeletedEventListener;
 import it.unicam.cs.mpgc.jbudget109164.repository.tag.TagRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,21 +15,16 @@ import java.nio.file.Path;
 import java.util.*;
 
 @SuppressWarnings("DuplicatedCode")
-public class JsonBudgetRepository extends AbstractJsonRepository<UUID, BudgetDTO> implements BudgetRepository {
+public class JsonBudgetRepository extends AbstractJsonRepository<BudgetDTO> implements BudgetRepository, TagDeletedEventListener {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonBudgetRepository.class);
 
     private final TagRepository tagRepository;
 
-    protected JsonBudgetRepository(JsonRepositoryConfig config,
+    public JsonBudgetRepository(JsonRepositoryConfig config,
                                    TagRepository tagRepository) {
         super(config);
         this.tagRepository = tagRepository;
-    }
-
-    @Override
-    protected UUID parseToId(String budgetId) {
-        return UUID.fromString(budgetId);
     }
 
     @Override
@@ -177,5 +174,23 @@ public class JsonBudgetRepository extends AbstractJsonRepository<UUID, BudgetDTO
             LOGGER.error(message);
             throw new JsonRepositoryException(message);
         }
+    }
+
+    @Override
+    public void onTagDeleted(TagDeletedEvent event) {
+        UUID tagId = event.deletedTagId();
+        LOGGER.debug("Removing tag references with ID {} from all budgets", tagId);
+
+        List<UUID> budgetsToDelete = new ArrayList<>();
+        for (Path budgetPath : filesPath.values()) {
+            BudgetDTO budget = readFromFile(budgetPath, BudgetDTO.class);
+            if (budget.tag() != null && budget.tag().id().equals(tagId)) {
+                budgetsToDelete.add(budget.id());
+            }
+        }
+        for (UUID budgetId : budgetsToDelete) {
+            deleteById(budgetId);
+        }
+        LOGGER.info("Removed tag references with ID {} from all budgets", tagId);
     }
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="800.0"
+            stylesheets="@/css/style.css"
+            style="-fx-background-color: #ecf0f1;">
+
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <Label text="Categories Management" styleClass="title-label"/>
+
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Category Operations" styleClass="subtitle-label"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="addCategoryButton" text="Add Category" styleClass="action-button"/>
+                <Button fx:id="addSubcategoryButton" text="Add Subcategory"
+                        styleClass="action-button" disable="true"/>
+                <Button fx:id="editCategoryButton" text="Edit"
+                        styleClass="action-button" disable="true"/>
+                <Button fx:id="deleteCategoryButton" text="Delete"
+                        styleClass="danger-button" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <HBox spacing="20" VBox.vgrow="ALWAYS">
+            <VBox spacing="10" prefWidth="400.0"
+                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                <Label text="Categories Tree" styleClass="subtitle-label"/>
+                <TreeView fx:id="categoriesTreeView" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+            <VBox fx:id="categoryDetailsBox" spacing="10" prefWidth="300.0" visible="false"
+                  style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+                <Label text="Category Details" styleClass="subtitle-label"/>
+                <Separator/>
+                <Label fx:id="categoryNameLabel" wrapText="true" styleClass="data-label"/>
+            </VBox>
+        </HBox>
+
+    </VBox>
+
+</AnchorPane>

@@ -1,44 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<BorderPane xmlns="http://javafx.com/javafx"
+<AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="500.0" prefWidth="700.0"
-            stylesheets="@/css/style.css">
+            prefHeight="600.0" prefWidth="800.0"
+            stylesheets="@/css/style.css"
+            style="-fx-background-color: #ecf0f1;">
 
-    <top>
-        <Label text="Movements" styleClass="title-label">
-            <BorderPane.margin>
-                <Insets top="15" left="20" bottom="10"/>
-            </BorderPane.margin>
-        </Label>
-    </top>
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
 
-    <center>
-        <TableView fx:id="movementsTable" styleClass="table-view">
-            <columns>
-                <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
-                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250"/>
-                <TableColumn fx:id="amountColumn" text="Amount" prefWidth="120"/>
-            </columns>
-            <BorderPane.margin>
-                <Insets top="10" right="20" bottom="10" left="20"/>
-            </BorderPane.margin>
-        </TableView>
-    </center>
+        <Label text="Movements" styleClass="title-label"/>
 
-    <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <padding>
-                <Insets top="10" right="20" bottom="15" left="20"/>
-            </padding>
-            <Button fx:id="addMovementButton" text="Add Movement" styleClass="action-button"/>
-            <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
-            <Button fx:id="refreshButton" text="Refresh" styleClass="action-button"/>
-        </HBox>
-    </bottom>
+        <VBox spacing="10" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
 
-</BorderPane>
+            <Label text="Movement List" styleClass="subtitle-label"/>
+
+            <TableView fx:id="movementsTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
+                    <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250"/>
+                    <TableColumn fx:id="amountColumn" text="Amount" prefWidth="120"/>
+                    <TableColumn fx:id="tagsColumn" text="Tags" prefWidth="200"/>
+                </columns>
+            </TableView>
+
+            <Pagination fx:id="movementsPagination" maxPageIndicatorCount="5"/>
+
+        </VBox>
+
+        <VBox spacing="10"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+
+            <Label text="Operations" styleClass="subtitle-label"/>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="addMovementButton" text="Add Movement" styleClass="action-button"/>
+                <Button fx:id="viewDetailsButton" text="View Details" styleClass="action-button"/>
+                <Button fx:id="refreshButton" text="Refresh" styleClass="action-button"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>

@@ -83,8 +83,8 @@ public class MovementDTOTypeAdapter implements CustomTypeAdapter<MovementDTO> {
             if (!tagElement.isJsonPrimitive() || !tagElement.getAsJsonPrimitive().isString()) {
                 throw new JsonParseException("Expected a string for tag ID");
             }
-            String tagId = tagElement.getAsString();
-            tags[i] = TagDTO.builder().withId(UUID.fromString(tagId)).build();
+            UUID tagId = UUID.fromString(tagElement.getAsString());
+            tags[i] = TagDTO.builder().withId(tagId).build();
         }
         return tags;
     }

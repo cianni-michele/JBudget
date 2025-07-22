@@ -8,7 +8,7 @@ import java.util.Set;
 
 import it.unicam.cs.mpgc.jbudget109164.model.tag.Tag;
 
-public abstract class EntityWithTags<I, D extends EntityDetails> implements Entity<I, D>, Iterable<Tag> {
+public abstract class EntityWithTags<D extends EntityDetails> implements Entity<D>, Iterable<Tag> {
     
     protected final Set<Tag> tags;
 
@@ -20,15 +20,31 @@ public abstract class EntityWithTags<I, D extends EntityDetails> implements Enti
         return Collections.unmodifiableSet(tags);
     }
 
+    public void addTags(Set<Tag> tags) {
+        if (tags == null) {
+            throw new IllegalArgumentException("Tags cannot be null");
+        }
+        this.tags.addAll(tags);
+    }
+
     public void addTag(Tag tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("Tag cannot be null");
+        }
         tags.add(tag);
     }
 
     public void removeTag(Tag tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("Tag cannot be null");
+        }
         tags.remove(tag);
     }
 
-    public boolean hasTag(Tag tag) {
+    public boolean isTaggedBy(Tag tag) {
+        if (tag == null) {
+            throw new IllegalArgumentException("Tag cannot be null");
+        }
         return tags.contains(tag);
     }
 

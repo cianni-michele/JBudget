@@ -7,9 +7,9 @@ import it.unicam.cs.mpgc.jbudget109164.mapper.tag.TagMapper;
 
 import java.time.YearMonth;
 
-public class MonthlyBudgetMapper extends BudgetMapper<YearMonth> {
+public final class MonthlyBudgetMapper extends BudgetMapper<YearMonth> {
 
-    protected MonthlyBudgetMapper(TagMapper tagMapper) {
+    public MonthlyBudgetMapper(TagMapper tagMapper) {
         super(tagMapper);
     }
 

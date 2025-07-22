@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="800.0"
+            stylesheets="@/css/style.css"
+            style="-fx-background-color: #ecf0f1;">
+
+    <VBox spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+
+        <Label text="Monthly Budgets" styleClass="title-label"/>
+
+        <VBox spacing="10"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+
+            <Label text="Budget Operations" styleClass="subtitle-label"/>
+
+            <GridPane hgap="15" vgap="10">
+                <Label text="Tag:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <ComboBox fx:id="tagComboBox" promptText="Select a tag..."
+                          styleClass="text-field" prefWidth="200.0"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="Period (YYYY-MM):" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <HBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <ComboBox fx:id="yearComboBox" prefWidth="150.0" styleClass="text-field"/>
+                    <ComboBox fx:id="monthComboBox" prefWidth="100.0" styleClass="text-field"/>
+                </HBox>
+
+                <Label text="Expected Amount:" styleClass="label-bold"
+                       GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <TextField fx:id="expectedAmountField" promptText="0.00"
+                           styleClass="text-field" prefWidth="200.0"
+                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            </GridPane>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="createBudgetButton" text="Create Budget" styleClass="action-button"/>
+                <Button fx:id="updateBudgetButton" text="Update Budget"
+                        styleClass="action-button" disable="true"/>
+                <Button fx:id="clearFormButton" text="Clear" styleClass="action-button"/>
+                <Button fx:id="deleteBudgetButton" text="Delete Budget"
+                        styleClass="danger-button" disable="true"/>
+            </HBox>
+        </VBox>
+
+        <VBox spacing="10" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+
+            <Label text="Budget List" styleClass="subtitle-label"/>
+
+            <TableView fx:id="budgetsTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="periodColumn" text="Period" prefWidth="120"/>
+                    <TableColumn fx:id="tagColumn" text="Tag" prefWidth="150"/>
+                    <TableColumn fx:id="expectedAmountColumn" text="Expected Amount" prefWidth="120"/>
+                    <TableColumn fx:id="actualAmountColumn" text="Actual Amount" prefWidth="120"/>
+                    <TableColumn fx:id="remainingColumn" text="Remaining" prefWidth="120"/>
+                    <TableColumn fx:id="progressColumn" text="Progress %" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="refreshButton" text="Refresh" styleClass="action-button"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>

@@ -7,8 +7,6 @@ import java.util.UUID;
 
 public record MovementDTO(UUID id, String description, Double amount, LocalDate date, TagDTO[] tags) {
 
-	private static final Builder BUILDER = new Builder();
-
 	public static class Builder {
 		private UUID id;
 		private String description;
@@ -59,6 +57,6 @@ public record MovementDTO(UUID id, String description, Double amount, LocalDate 
     }
 
 	public static Builder builder() {
-		return BUILDER;
+		return new Builder();
 	}
 }
