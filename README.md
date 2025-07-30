@@ -168,7 +168,7 @@ The project was developed following the Advanced Programming course specificatio
 ## 👨‍💻 License and Author
 
 This project is licensed under the **MIT License**.  
-See the [LICENSE](./LICENCE) file for more information.
+See the [LICENSE](./LICENSE) file for more information.
 
 **Author:** Michele Cianni
 
