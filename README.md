@@ -164,3 +164,16 @@ The project was developed following the Advanced Programming course specificatio
 ### Statistics and Reports
 ![Statistics View](docs/images/statistics.png)
 *Detailed statistics with charts and trend analysis*
+
+## 👨‍💻 License and Author
+
+This project is licensed under the **MIT License**.  
+See the [LICENSE](./LICENCE) file for more information.
+
+**Author:** Michele Cianni
+
+**University Course:** Advanced Programming – 2024/25
+
+**University:** University of Camerino
+
+**Email:** michele.cianni@studenti.unicam.it
